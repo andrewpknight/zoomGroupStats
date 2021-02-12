@@ -181,7 +181,7 @@ processZoomChat = function(fname, sessionStartDateTime, languageCode) {
 # This function parses the data from the transcript file (.vtt) that is downloaded from the Zoom website. 
 # NOTE: This is the file that accompanies a recording to the cloud. 
 
-# example call:				tr.out = processZoomTranscript(fname="~/Desktop/transcript.vtt", recordingStartTime="2020-04-01 17:56:34", languageCode="en")
+# example call:				tr.out = processZoomTranscript(fname="~/Desktop/transcript.vtt", recordingStartDateTime="2020-04-01 17:56:34", languageCode="en")
 
 # INPUT:
 # fname: 					the path to the local file where the transcript file (vtt) is saved.
