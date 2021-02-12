@@ -1,8 +1,14 @@
 ############################################################
 # Author: 			Andrew Knight (http://apknight.org)
 	
-# Last Update:		2020-11-24 16:00 US CDT
-# Update Note:		Some bug fixes and an alpha function to do turn-taking analysis. 
+# Last Update:		2021-02-12 09:30 US CDT
+# Update Notes:		
+#					- Some bug fixes 
+#					- Added a function to process zoomMeetingInfo
+#					- Added an alpha function to do turn-taking analysis. 
+# 					- Added a few alpha functions to process audio files
+#					- Added a few alpha functions to do windowed analyses
+#					- Changed the video processing from magick to ffmpeg
 
 # I created this as a way to help people do social science research through web-based meetings (i.e., Zoom). 
 # It's still a work in progress, but this is a start. If you would like to use it or help build it, 
@@ -10,16 +16,25 @@
 
 
 ############################################################
-# OVERVIEW OF FUNCTIONS
+# OVERVIEW OF FUNCTIONS 
 ############################################################
 # This script contains functions to use for analyzing recorded Zoom sessions
 # This is a work in progress and more are coming. 
 
+# FUNCTIONS THAT ARE HEAVILY COMMENTED
+# processZoomMeetingInfo	Parses the downloaded meeting particiapnts file from Zoom
 # processZoomChat			Parses the downloaded chat file from a recorded Zoom session
 # processZoomTranscript		Parses the downloaded transcript from a recorded Zoom session
 # sentiOut					Conducts a sentiment analysis on either the Chat or Transcript
 # videoFaceAnalysis 		Analyzes the video from a Zoom session and outputs face/emotion measures
 # textConversationAnalysis	Analyzes either chat or transcript and outputs conversation metrics
+
+# FUNCTIONS THAT ARE IN ALPHA STAGE AND THAT I'M TESTING
+# transcribeZoomAudio		uses AWS transcription service to process an audio file
+# processZoomAudio			parse the output of the AWS transcription
+# makeTimeWindows			Creates time windows in a transcript to do windowed analyses
+# windowedTextConversationAnalysis	Conducts a windowed conversation analysis
+# turn-taking				Does an analysis of conversation turn-taking
 
 # Note you will require the following packages to run these: 
 # reshape2
@@ -33,7 +48,33 @@
 # Search online for (a) setting up AWS account; (b) setting up paws. I found the following useful: 
 # https://github.com/paws-r/paws/blob/master/docs/credentials.md
 
+# For doing face analysis, you'll also need to have ffmpeg installed on your machine (this change
+# was motivated by the speed of video processing using ffmpeg)
+
 # If, after you try you are still struggling, I can give guidance on this if useful--just contact me. 
+
+############################################################
+# processZoomMeetingInfo Function
+############################################################
+
+# Zoom Meeting / Participants info parsing function
+# This function parses the information from the downloadable meeting information 
+# file in Zooms "reports" section. This file presumes that you have 
+# checked the box to include the meeting information in the file. 
+
+processZoomMeetingInfo = function(inputPath) {
+
+	meetInfo = data.frame(read.delim(inputPath, header=T, nrows=1, skip=0, sep=","), stringsAsFactors=F)
+	names(meetInfo) = c("meetingId", "meetingTopic", "meetingStartTime", "meetingEndTime", "userEmail", "meetingDuration", "numParticipants", "blankCol")
+	meetInfo$blankCol = NULL
+
+	partInfo = data.frame(read.delim(inputPath, header=T, skip=3, sep=","), stringsAsFactors=F)
+	names(partInfo) = c("userName", "userEmail", "userDuration", "userGuest")	
+
+	outInfo = list(meetInfo, partInfo)	
+
+	return(outInfo)
+}
 
 ############################################################
 # processZoomChat Function
@@ -346,7 +387,163 @@ sentiOut = function(inputData, idVar, textVar, languageCodeVar){
 # One workaround for now (for research) would be to set recordings to auto-start. This is not ideal, though.
 # we should be able to know when the recording was started. It is embedded in the video, so could pull from there.
 
+
+grabVideoStills = function(inputVideo, sampleWindow, stillPath) {
+		ffCmd = paste("ffmpeg -i ", inputVideo, " -r 1/",sampleWindow, " -f image2 ", paste(stillPath,"/",sep=""), "%05d.png", sep="")
+		system(ffCmd)
+}
+
+
 videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA) {
+	require(paws)
+	require(magick)
+
+	svc = rekognition()
+
+	recordingStartDateTime = as.POSIXct(recordingStartDateTime)
+
+	## Create stills from the video => Save in a temp directory
+	base_name = strsplit(basename(inputVideo), ".", fixed=T)[[1]][[1]]
+	img_temp_dir = 	paste(dirname(inputVideo),"/videoFaceAnalysis_temp_", base_name, sep="")
+	dir.create(img_temp_dir)
+
+	grabVideoStills(inputVideo, sampleWindow, img_temp_dir)
+
+	# Get any images associated with this video
+	img_files = list.files(path=img_temp_dir, full.names=T)
+
+
+	# These are empty lists to use to safe the information
+	df.o = list()
+	inf = list()
+
+	# Now loop through the images that are part of this video (which were already extracted)
+
+	for(i in 1:length(img_files)) {
+
+		# Pull the image and its information
+		img = image_read(img_files[i])
+		inf[[i]] = image_info(img)
+
+		# This is stupid, but it is necessary to adjust the timestamping
+		if(i >= 3) {
+			img_timestamp = 17 + (i-3)*20
+		} else {
+			img_timestamp = 0
+		}		
+
+		# Detect faces in this frame
+		df.o[[i]] = svc$detect_faces(Image=list(Bytes=img_files[i]), Attributes="ALL")
+
+		# Get the details of any faces detected in this frame
+		faces = df.o[[i]]$FaceDetails
+
+		# If there are no faces in the image, then create a blank results record, with just the image id
+		if(length(faces) == 0) {
+			res.line = matrix(nrow=1,ncol=23)
+			res.line[1,1] = img_files[i]
+			res.line[1, 21] = img_timestamp			
+		} else {
+		# Otherwise, if there are faces in the image, go through each face to get its info	
+			# create a matrix to hold the info
+			res.line = matrix(nrow=length(faces), ncol=23)
+
+			# Loop through each face and analyze it
+
+			for(face.num in 1:length(faces)) {
+				fd = faces[[face.num]]
+				res.line[face.num,1] = img_files[i]
+				res.line[face.num,2] = face.num
+				res.line[face.num,3] = fd$AgeRange$Low
+				res.line[face.num,4] = fd$AgeRange$High
+				res.line[face.num,5] = fd$Smile$Value
+				res.line[face.num,6] = fd$Eyeglasses$Value
+				res.line[face.num,7] = fd$Sunglasses$Value
+				res.line[face.num,8] = fd$Gender$Value
+				res.line[face.num,9] = fd$Beard$Value
+				res.line[face.num,10] = fd$Mustache$Value
+				res.line[face.num,11] = fd$EyesOpen$Value		
+				res.line[face.num,12] = fd$MouthOpen$Value		
+
+				# Make an emotions table for this image
+				for(e in fd$Emotions) {
+
+					if(e$Type == "CONFUSED") res.line[face.num,13] = e$Confidence
+					else if(e$Type == "CALM") res.line[face.num,14] = e$Confidence
+					else if(e$Type == "HAPPY") res.line[face.num,15] = e$Confidence
+					else if(e$Type == "DISGUSTED") res.line[face.num,16] = e$Confidence
+					else if(e$Type == "ANGRY") res.line[face.num,17] = e$Confidence
+					else if(e$Type == "FEAR") res.line[face.num,18] = e$Confidence
+					else if(e$Type == "SAD") res.line[face.num,19] = e$Confidence
+					else if(e$Type == "SURPRISED") res.line[face.num,20] = e$Confidence		
+				}
+				res.line[face.num, 21] = img_timestamp
+
+				# if the user specified a face collection, go into it to see if the face has an identity
+				# Including the confidence value because it sometimes couldn't tell it was a face
+				# at low levels of confidence
+				if(!is.na(facesCollectionID) && fd$Confidence > 90) {
+
+					# Identify the coordinates of the face. Note that AWS returns percentage values of the total image size. This is
+					# why the image info object above is needed
+					box = fd$BoundingBox
+					image_width=inf[[i]]$width
+					image_height=inf[[i]]$height
+					x1 = box$Left*image_width
+					y1 = box$Top*image_height
+					x2 = x1 + box$Width*image_width
+					y2 = y1 + box$Height*image_height	
+
+					# Crop out just this particular face out of the video
+					img.crop = image_crop(img, paste(box$Width*image_width,"x",box$Height*image_height,"+",x1,"+",y1, sep=""))
+					img.crop = image_write(img.crop, path = NULL, format = "png")
+					
+					# Search in a specified collection to see if we can label the identity of the face is in this crop
+					faceRec = try(svc$search_faces_by_image(CollectionId=facesCollectionID,Image=list(Bytes=img.crop), FaceMatchThreshold=70), silent=T)
+
+
+					if(is.character(faceRec)) {
+						res.line[face.num, 22] = "IDENTITY NOT RECOGNIZED"							
+					} else {
+						if(length(faceRec$FaceMatches) > 0) {
+							res.line[face.num, 22] = faceRec$FaceMatches[[1]]$Face$ExternalImageId
+							res.line[face.num, 23] = faceRec$FaceMatches[[1]]$Face$Confidence
+						} else {
+							res.line[face.num, 22] = "IDENTITY NOT RECOGNIZED"							
+						}							
+					}
+				} else {
+					res.line[face.num, 22] = "IDENTITY NOT RECOGNIZED"
+				}
+			# Close the face loop
+			}
+		# Close the else	
+		}		
+		if(i == 1) {
+			raw.out = res.line
+		} else {
+			raw.out = rbind(raw.out, res.line)
+		}			
+	# Close the image loop
+	}		
+
+	res.out = data.frame(raw.out, stringsAsFactors=F)
+	col.numeric = c(2:4, 13:21, 23)
+	col.boolean = c(5:7,9:12)
+	col.names = c("frame_id", "face_id", "age_low", "age_high", "smile", "eyeglasses", "sunglasses", "gender", "beard", "mustache", "eyesopen", "mouthopen", "confused", "calm", "happy", "disgusted", "angry", "fear", "sad", "surprised", "img_timestamp", "identified_person", "identification_confidence")
+	res.out[,col.numeric] = lapply(res.out[,col.numeric], as.numeric)
+	res.out[,col.boolean] = lapply(res.out[,col.boolean], as.logical)
+	names(res.out) = col.names	
+	res.out = res.out[, c(1,21,22,23, 2:20)]	
+}
+
+
+
+
+
+
+
+videoFaceAnalysisOld = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA) {
 	require(paws)
 	require(magick)
 	svc = rekognition()
