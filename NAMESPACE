@@ -2,3 +2,4 @@
 
 export(processZoomChat)
 export(processZoomParticipantsInfo)
+export(processZoomTranscript)
