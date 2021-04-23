@@ -11,7 +11,8 @@
 #' @export
 #'
 #' @examples
-#' turn.out = turnTaking(inputData=sample_transcript_processed, inputType='transcript', 
+#' turn.out = turnTaking(inputData=sample_transcript_processed, 
+#' inputType='transcript', 
 #' speakerId='userName')
 #' 
 turnTaking = function(inputData, inputType, speakerId) {

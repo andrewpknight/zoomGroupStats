@@ -21,7 +21,8 @@ Generate a very basic analysis of the conversational turntaking in
 either a Zoom transcript or a Zoom chat file.
 }
 \examples{
-turn.out = turnTaking(inputData=sample_transcript_processed, inputType='transcript', 
+turn.out = turnTaking(inputData=sample_transcript_processed, 
+inputType='transcript', 
 speakerId='userName')
 
 }

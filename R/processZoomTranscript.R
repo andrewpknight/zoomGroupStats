@@ -13,9 +13,8 @@
 #'
 #' @examples
 #' tr.out = processZoomTranscript(
-#' fname=system.file('extdata', "sample_transcript.vtt", package = 'zoomGroupStats'),
-#' recordingStartDateTime = '2020-04-20 13:30:00', 
-#' languageCode = 'en')
+#' fname=system.file('extdata', 'sample_transcript.vtt', package = 'zoomGroupStats'), 
+#' recordingStartDateTime = '2020-04-20 13:30:00', languageCode = 'en')
 processZoomTranscript = function(fname, recordingStartDateTime, languageCode) {
 
   # Function to parse the time to create a total number of seconds

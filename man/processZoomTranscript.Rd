@@ -26,7 +26,6 @@ NOTE: This is the file that accompanies a recording to the cloud.
 
 \examples{
 tr.out = processZoomTranscript(
-fname=system.file('extdata', "sample_transcript.vtt", package = 'zoomGroupStats'),
-recordingStartDateTime = '2020-04-20 13:30:00', 
-languageCode = 'en')
+fname=system.file('extdata', 'sample_transcript.vtt', package = 'zoomGroupStats'), 
+recordingStartDateTime = '2020-04-20 13:30:00', languageCode = 'en')
 }
