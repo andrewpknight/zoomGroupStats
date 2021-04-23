@@ -1,8 +1,0 @@
-Package: zoomGroupStats
-Title: Analyze Text, Audio, and Video from Zoom Meetings
-Version: 0.0.0.9000
-Authors@R: person("Andrew", "Knight", email = "knightap@wustl.edu", role = c("aut", "cre"))
-Description: zoomGroupStats provides utilities for processing and analyzing the files that are exported from a recorded Zoom Meeting. This includes analyzing data captured through video cameras and microphones, the text-based chat, and meta-data. You can analyze aspects of the conversation among meeting participants and their emotional expressions throughout the meeting. 
-Depends: R (>=3.1.0)
-License: GPL-3
-LazyData: true
