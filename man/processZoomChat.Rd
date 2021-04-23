@@ -7,14 +7,14 @@
 processZoomChat(fname, sessionStartDateTime, languageCode)
 }
 \arguments{
-\item{fname}{character}
+\item{fname}{String that is the path to the exported Zoom .txt chat file}
 
-\item{sessionStartDateTime}{character}
+\item{sessionStartDateTime}{String that is the start of the session in YYYY-MM-DD HH:MM:SS}
 
-\item{languageCode}{character}
+\item{languageCode}{String denoting the language}
 }
 \value{
-data.frame
+data.frame where each record is a message submission in the chat.
 }
 \description{
 This function parses the data from the chatfile that is downloaded from the Zoom website.

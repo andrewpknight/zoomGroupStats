@@ -4,11 +4,11 @@
 #' This function parses the data from the transcript file (.vtt) that is downloaded from the Zoom website. 
 #' NOTE: This is the file that accompanies a recording to the cloud.
 #' 
-#' @param fname charracter 
-#' @param recordingStartDateTime character
-#' @param languageCode character
+#' @param fname String that is the path to the exported Zoom .vtt transcript chat file
+#' @param recordingStartDateTime String that is the timestamp when the recording was started in YYYY-MM-DD HH:MM:SS
+#' @param languageCode String denoting the language
 #'
-#' @return data.frame
+#' @return data.frame where each record is an utterance in the transcript
 #' @export
 #'
 #' @examples

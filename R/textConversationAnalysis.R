@@ -7,7 +7,11 @@
 #' @param doSentiment boolean
 #' @param sentiDone boolean
 #'
-#' @return list
+#' @return 
+#' A list of two data.frames, with names conditional on your choice to analyze
+#' a parsed transcript file or a parsed chat file. The first list item contains
+#' statistics at the corpus level. The second list item contains statistics
+#' at the speaker/messager level of analysis.
 #' @export
 #'
 #' @examples

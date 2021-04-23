@@ -7,14 +7,14 @@
 processZoomTranscript(fname, recordingStartDateTime, languageCode)
 }
 \arguments{
-\item{fname}{charracter}
+\item{fname}{String that is the path to the exported Zoom .vtt transcript chat file}
 
-\item{recordingStartDateTime}{character}
+\item{recordingStartDateTime}{String that is the timestamp when the recording was started in YYYY-MM-DD HH:MM:SS}
 
-\item{languageCode}{character}
+\item{languageCode}{String denoting the language}
 }
 \value{
-data.frame
+data.frame where each record is an utterance in the transcript
 }
 \description{
 Process Zoom transcript file

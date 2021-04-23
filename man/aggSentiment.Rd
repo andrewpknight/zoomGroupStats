@@ -9,12 +9,13 @@ sentiment variables}
 aggSentiment(inputData, speakerId)
 }
 \arguments{
-\item{inputData}{data.table}
+\item{inputData}{data.frame that has been output from textSentiment function}
 
-\item{speakerId}{character}
+\item{speakerId}{string that indicates the name of the variable containing the speaker identity}
 }
 \value{
-list
+A list with data.frames. The first gives sentiment variables at the corpus level of analysis
+The second gives sentiment variables at the speaker level of analysis.
 }
 \description{
 Helper function to aggregate sentiment variables

@@ -7,16 +7,16 @@
 textSentiment(inputData, idVar, textVar, languageCodeVar)
 }
 \arguments{
-\item{inputData}{data.frame}
+\item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
 
-\item{idVar}{character}
+\item{idVar}{name of variable that gives the unique identifier for the speaker/writer of each piece of text}
 
-\item{textVar}{character}
+\item{textVar}{name of variable that contains the text}
 
-\item{languageCodeVar}{character}
+\item{languageCodeVar}{name of variable that contains the language code}
 }
 \value{
-data.frame
+returns the inputData with sentiment analysis variables appended
 }
 \description{
 This function takes in the output of the chat and transcript functions. It then

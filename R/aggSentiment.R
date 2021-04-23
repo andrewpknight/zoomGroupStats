@@ -1,10 +1,11 @@
 #' Helper function to aggregate sentiment variables
 #' This is just a simple helper function that is used to aggregate the 
 #' sentiment variables
-#' @param inputData data.table 
-#' @param speakerId character
+#' @param inputData data.frame that has been output from textSentiment function
+#' @param speakerId string that indicates the name of the variable containing the speaker identity
 #' @import data.table
-#' @return list
+#' @return A list with data.frames. The first gives sentiment variables at the corpus level of analysis
+#' The second gives sentiment variables at the speaker level of analysis.
 #' @export
 #'
 #' @examples

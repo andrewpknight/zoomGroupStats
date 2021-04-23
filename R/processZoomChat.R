@@ -5,11 +5,11 @@
 #'It is also not the one that is saved locally on your computer. 
 #'This is the file that you can access after a session if you record in the cloud.
 #'
-#' @param fname character
-#' @param sessionStartDateTime character
-#' @param languageCode character
+#' @param fname String that is the path to the exported Zoom .txt chat file
+#' @param sessionStartDateTime String that is the start of the session in YYYY-MM-DD HH:MM:SS
+#' @param languageCode String denoting the language
 #'
-#' @return data.frame
+#' @return data.frame where each record is a message submission in the chat. 
 #' @export
 #'
 #' @examples

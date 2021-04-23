@@ -6,12 +6,12 @@
 #' To use this function, you must have an aws account that with privileges for the comprehend service
 #' However you authenticate for AWS, you should do so before running the function.
 #'
-#' @param inputData data.frame 
-#' @param idVar character 
-#' @param textVar character
-#' @param languageCodeVar character
+#' @param inputData data.frame that has been output by either the processZoomTranscript or processZoomChat functions 
+#' @param idVar name of variable that gives the unique identifier for the speaker/writer of each piece of text 
+#' @param textVar name of variable that contains the text
+#' @param languageCodeVar name of variable that contains the language code
 #'
-#' @return data.frame
+#' @return returns the inputData with sentiment analysis variables appended
 #' @export
 #'
 #' @examples
