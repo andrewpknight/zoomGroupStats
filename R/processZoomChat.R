@@ -1,9 +1,10 @@
-
 #' Process a Zoom chat file
+#' 
 #'This function parses the data from the chatfile that is downloaded from the Zoom website.
 #'NOTE: This is the file that accompanies a recording. This is not the file that you download directly within the window. 
 #'It is also not the one that is saved locally on your computer. 
 #'This is the file that you can access after a session if you record in the cloud.
+#'
 #' @param fname character
 #' @param sessionStartDateTime character
 #' @param languageCode character

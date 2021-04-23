@@ -2,11 +2,7 @@
 % Please edit documentation in R/processZoomChat.R
 \name{processZoomChat}
 \alias{processZoomChat}
-\title{Process a Zoom chat file
-This function parses the data from the chatfile that is downloaded from the Zoom website.
-NOTE: This is the file that accompanies a recording. This is not the file that you download directly within the window.
-It is also not the one that is saved locally on your computer.
-This is the file that you can access after a session if you record in the cloud.}
+\title{Process a Zoom chat file}
 \usage{
 processZoomChat(fname, sessionStartDateTime, languageCode)
 }
@@ -21,7 +17,6 @@ processZoomChat(fname, sessionStartDateTime, languageCode)
 data.frame
 }
 \description{
-Process a Zoom chat file
 This function parses the data from the chatfile that is downloaded from the Zoom website.
 NOTE: This is the file that accompanies a recording. This is not the file that you download directly within the window.
 It is also not the one that is saved locally on your computer.

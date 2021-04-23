@@ -1,5 +1,9 @@
 #' Process Zoom transcript file
 #'
+#'# Zoom Recording Transcript File Processing
+#' This function parses the data from the transcript file (.vtt) that is downloaded from the Zoom website. 
+#' NOTE: This is the file that accompanies a recording to the cloud.
+#' 
 #' @param fname charracter 
 #' @param recordingStartDateTime character
 #' @param languageCode character

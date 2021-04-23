@@ -3,3 +3,4 @@
 export(processZoomChat)
 export(processZoomParticipantsInfo)
 export(processZoomTranscript)
+export(textSentiment)
