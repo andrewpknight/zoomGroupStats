@@ -17,6 +17,10 @@
 #' }
 videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA) {
 
+  # Need to add options so that peopel can do this on a directory of images
+  # Also give options to do it with image magick
+  
+  
   svc = paws::rekognition()
   
   recordingStartDateTime = as.POSIXct(recordingStartDateTime)

@@ -16,7 +16,14 @@
 #' sampleWindow=45, stillPath="")
 #' }
 grabVideoStills = function(inputVideo, sampleWindow, stillPath) {
+
+  # Need to change this function to give an option to use ffmpeg or the magick package
+  # this will allow more people to use it. 
   
+  # Also, need to fix the weird splitting of videos where I'm getting two blank
+  # screens at zero time.
+  
+    
   # Check to see if the user has ffmpeg installed on their machine (should probably suppress output of this)
   if(system("ffmpeg -version", intern=F) != 0) {
     stop("You must have ffmpeg installed on your machine to use this function.")
