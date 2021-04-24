@@ -2,6 +2,7 @@
 
 export(aggSentiment)
 export(grabVideoStills)
+export(makeTimeWindows)
 export(processZoomChat)
 export(processZoomParticipantsInfo)
 export(processZoomTranscript)
