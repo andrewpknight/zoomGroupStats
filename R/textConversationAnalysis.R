@@ -55,7 +55,7 @@ textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment
         inputData = textSentiment(inputData=inputData, idVar="utteranceId", textVar="utteranceMessage", languageCodeVar="utteranceLanguage")
       }
       
-      aggSentimentOut = aggSentiment(inputData)
+      aggSentimentOut = aggSentiment(inputData, speakerId)
       text.out.tr = cbind(agg.tr, aggSentimentOut[[1]])
       text.out.ind = merge(agg.ind, aggSentimentOut[[2]], by=speakerId)
     } else {
@@ -96,7 +96,7 @@ textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment
         inputData = textSentiment(inputData = inputData, idVar="messageId", textVar = "message", languageCodeVar="messageLanguage")
       }
       
-      aggSentimentOut = aggSentiment(inputData)
+      aggSentimentOut = aggSentiment(inputData, speakerId)
       text.out.ch = cbind(agg.ch, aggSentimentOut[[1]])
       text.out.ind = merge(agg.ind, aggSentimentOut[[2]], by=speakerId)			
     } else {
