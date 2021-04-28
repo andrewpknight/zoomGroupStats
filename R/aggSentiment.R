@@ -12,6 +12,8 @@
 #' agg.out = aggSentiment(inputData=sample_transcript_sentiment_processed, speakerId="userName")
 aggSentiment = function(inputData, speakerId) {
   
+  sentClass <- positive <- sd <- negative <- neutral <- mixed <- NULL
+  
   sent.dt = data.table::data.table(inputData)
   
   # Create the transcript level sentiment information

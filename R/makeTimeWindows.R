@@ -13,6 +13,8 @@
 #' timeVar="utteranceStartSeconds", windowSize=10)
 makeTimeWindows = function(inputData, timeVar, windowSize) {
   
+  tempTimeVarHelp <- tempTimeVar <- NULL
+  
   inputData$tempTimeVar = floor(inputData[,timeVar])
   
   # Create a set of windows
@@ -29,8 +31,6 @@ makeTimeWindows = function(inputData, timeVar, windowSize) {
                                   by.y=c('windowStart', 'windowEnd')))
   inputMrg[,timeVar] = inputMrg$tempTimeVar
   inputMrg[,c("tempTimeVar", "tempTimeVarHelp")] = NULL
-  head(inputMrg)
   windows = data.frame(windows)
-  
   return(list("windowedData" = inputMrg, "allWindows" = windows))
 }

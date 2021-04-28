@@ -16,7 +16,10 @@
 #' speakerId='userName')
 #' 
 turnTaking = function(inputData, inputType, speakerId) {
-  # Get the names of the unique speakers in this file
+  
+  turnGap<-sd<-speakerCurrent<-speakerBefore<-numTurns<-turnGap_x<-NULL
+  
+    # Get the names of the unique speakers in this file
   uniqueSpeakers = sort(unique(inputData[,speakerId]))
 
 #Create lagged variables

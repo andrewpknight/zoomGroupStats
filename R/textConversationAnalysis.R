@@ -19,6 +19,8 @@
 #' inputType='transcript', speakerId='userName', doSentiment=FALSE, sentiDone=FALSE)
 textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment=FALSE, sentiDone=FALSE) {
 
+  utteranceStartTime<-utteranceEndTime<-utteranceTimeWindow<-utteranceGap<-sd<-messageTime<-messageNumChars<-messageGap<-NULL
+  
     ########################################
   # IF THE USER REQUESTED AN ANALYSIS OF A TRANSCRIPT FILE, DO THE FOLLOWING
   ########################################			
@@ -77,14 +79,14 @@ textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment
     # Calculate the gap between one message and the prior one
     inputData$messageGap = as.numeric(inputData$messageTime-dplyr::lag(inputData$messageTime))		
     raw.dt = data.table::data.table(inputData)
-    agg.ch = data.frame(raw.dt[, .(chatStartTime = min(messageTime), chatEndTime = max(messageTime), messageNumChars_sum = sum(messageNumChars), messageNumChars_x = mean(messageNumChars), messageNumChars_sd = sd(messageNumChars), messageGap_x = mean(messageGap, na.rm=T), messageGap_sd = sd(messageGap, na.rm=T), numUniqueMessagers = uniqueN(get(speakerId)), numMessages = .N)])
+    agg.ch = data.frame(raw.dt[, list(chatStartTime = min(messageTime), chatEndTime = max(messageTime), messageNumChars_sum = sum(messageNumChars), messageNumChars_x = mean(messageNumChars), messageNumChars_sd = sd(messageNumChars), messageGap_x = mean(messageGap, na.rm=T), messageGap_sd = sd(messageGap, na.rm=T), numUniqueMessagers = uniqueN(get(speakerId)), numMessages = .N)])
     agg.ch$totalRecordedTime = as.numeric(difftime(agg.ch$chatEndTime, agg.ch$chatStartTime, units="secs"))
     agg.ch$burstinessRaw = (agg.ch$messageGap_sd - agg.ch$messageGap_x) / (agg.ch$messageGap_sd + agg.ch$messageGap_x)
     
     ########################################
     # Create a base individual-level output for this transcript
     ########################################
-    agg.ind = data.frame(raw.dt[, .(numMessages = .N, firstMessageTime = min(messageTime), lastMessageTime = max(messageTime), messageNumChars_sum = sum(messageNumChars, na.rm=T), messageNumChars_x = mean(messageNumChars, na.rm=T), messageNumChars_sd = sd(messageNumChars, na.rm=T), messageGap_x = mean(messageGap, na.rm=T), messageGap_sd = sd(messageGap, na.rm=T)), by=list(get(speakerId))])
+    agg.ind = data.frame(raw.dt[, list(numMessages = .N, firstMessageTime = min(messageTime), lastMessageTime = max(messageTime), messageNumChars_sum = sum(messageNumChars, na.rm=T), messageNumChars_x = mean(messageNumChars, na.rm=T), messageNumChars_sd = sd(messageNumChars, na.rm=T), messageGap_x = mean(messageGap, na.rm=T), messageGap_sd = sd(messageGap, na.rm=T)), by=list(get(speakerId))])
     names(agg.ind)[1] = speakerId
     
     ########################################
