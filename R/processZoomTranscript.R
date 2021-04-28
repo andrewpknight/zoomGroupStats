@@ -15,15 +15,7 @@
 #' tr.out = processZoomTranscript(
 #' fname=system.file('extdata', 'sample_transcript.vtt', package = 'zoomGroupStats'), 
 #' recordingStartDateTime = '2020-04-20 13:30:00', languageCode = 'en')
-processZoomTranscript = function(fname, recordingStartDateTime, languageCode) {
-
-  # Function to parse the time to create a total number of seconds
-  timeCalc = function(incTime) {
-    inc_hours = as.numeric(substr(incTime,1,2))
-    inc_mins = as.numeric(substr(incTime,4,5))	
-    inc_secs = as.numeric(substr(incTime,7,12))		
-    inc_total_secs = inc_hours*60*60 + inc_mins*60 + inc_secs
-  }
+processZoomTranscript = function(fname, recordingStartDateTime="1970-01-01 00:00:00", languageCode="en") {
   
   # Parse the transcript file -- vtt is a structured format. 
   f = readLines(fname)
@@ -37,12 +29,11 @@ processZoomTranscript = function(fname, recordingStartDateTime, languageCode) {
   utteranceStartTime = unlist(strsplit(utteranceWindow, " --> "))[seq(1, length(utteranceWindow)*2, 2)]
   utteranceEndTime = unlist(strsplit(utteranceWindow, " --> "))[seq(2, length(utteranceWindow)*2, 2)]	
   
-  # Preserve this to use in a dynamic conversation analysis
-  utteranceStartSeconds = timeCalc(utteranceStartTime)
-  utteranceEndSeconds = timeCalc(utteranceEndTime)
+  utteranceStartSeconds = as.numeric(lubridate::seconds(lubridate::hms(utteranceStartTime)))
+  utteranceEndSeconds = as.numeric(lubridate::seconds(lubridate::hms(utteranceEndTime)))
   
   # Now turn these into actual datetime values
-  recordingStartDateTime = as.POSIXct(recordingStartDateTime)
+  recordingStartDateTime = as.POSIXct(recordingStartDateTime, tz=Sys.timezone())
   utteranceStartTime = recordingStartDateTime + utteranceStartSeconds
   utteranceEndTime = recordingStartDateTime + utteranceEndSeconds
   
@@ -60,7 +51,6 @@ processZoomTranscript = function(fname, recordingStartDateTime, languageCode) {
   
   # Mark as unidentified any user with a blank username
   res.out$userName = ifelse(res.out$userName == "" | is.na(res.out$userName), "UNIDENTIFIED", res.out$userName)		
-  
   # Add the language code
   res.out$utteranceLanguage = languageCode
   

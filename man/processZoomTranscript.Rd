@@ -4,7 +4,11 @@
 \alias{processZoomTranscript}
 \title{Process Zoom transcript file}
 \usage{
-processZoomTranscript(fname, recordingStartDateTime, languageCode)
+processZoomTranscript(
+  fname,
+  recordingStartDateTime = "1970-01-01 00:00:00",
+  languageCode = "en"
+)
 }
 \arguments{
 \item{fname}{String that is the path to the exported Zoom .vtt transcript chat file}

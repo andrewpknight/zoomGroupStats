@@ -4,7 +4,11 @@
 \alias{processZoomChat}
 \title{Process a Zoom chat file}
 \usage{
-processZoomChat(fname, sessionStartDateTime, languageCode)
+processZoomChat(
+  fname,
+  sessionStartDateTime = "1970-01-01 00:00:00",
+  languageCode = "en"
+)
 }
 \arguments{
 \item{fname}{String that is the path to the exported Zoom .txt chat file}

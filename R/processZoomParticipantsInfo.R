@@ -9,7 +9,8 @@
 #'
 #' @param inputPath character
 #'
-#' @return list
+#' @return list where first item is a data.frame containing meeting-level information
+#' and second item is a data.frame with the participant-level information
 #' @export
 #'
 #' @examples
@@ -17,38 +18,20 @@
 #' system.file('extdata', "sample_participants.csv", package = 'zoomGroupStats')
 #' )
 processZoomParticipantsInfo = function(inputPath) {
-
-  # convDate transforms the Zoom output for a timestamp into
-  # ISO 8601, but without the "T" delimiter: YYYY-MM-DD HH:MM:SS
-  convDate = function(oldDate) {
-    month = substr(oldDate,1,2)
-    day = substr(oldDate,4,5)
-    year = substr(oldDate,7,10)
-    hour = substr(oldDate,12,13)
-    min = substr(oldDate,15,16)
-    sec = substr(oldDate,18,19)
-    tod = substr(oldDate,21,22)
-    if(tod == "PM" && as.numeric(hour) < 12) {
-      hour = as.character((as.numeric(hour) + 12))
-    }
-    newDate = paste(year,"-", month, "-", day, " ", hour,":",min,":",sec, sep="")
-    return(newDate)
-  }
-
+  
   meetInfo = utils::read.table(inputPath, header=F, nrows=1, skip=1, sep=",", stringsAsFactors=F)
   meetInfo = meetInfo[,1:7]
   names(meetInfo) = c("meetingId", "meetingTopic", "meetingStartTime", "meetingEndTime", "userEmail", "meetingDuration", "numParticipants")
-
-
+  
   # Change the date column to something more useable in the other functions
-  meetInfo$meetingStartTime = convDate(meetInfo$meetingStartTime)
-  meetInfo$meetingEndTime = convDate(meetInfo$meetingEndTime)
-
+  meetInfo$meetingStartTime =  as.character(lubridate::parse_date_time(meetInfo$meetingStartTime, "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
+  meetInfo$meetingEndTime = as.character(lubridate::parse_date_time(meetInfo$meetingEndTime, "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
+  
   partInfo = data.frame(utils::read.delim(inputPath, header=T, skip=3, sep=",", stringsAsFactors=F))
   partInfo = partInfo[,1:4]
   names(partInfo) = c("userName", "userEmail", "userDuration", "userGuest")
-
+  
   outInfo = list(meetInfo = meetInfo, partInfo = partInfo)
-
+  
   return(outInfo)
 }

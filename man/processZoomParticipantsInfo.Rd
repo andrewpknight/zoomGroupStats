@@ -10,7 +10,8 @@ processZoomParticipantsInfo(inputPath)
 \item{inputPath}{character}
 }
 \value{
-list
+list where first item is a data.frame containing meeting-level information
+and second item is a data.frame with the participant-level information
 }
 \description{
 This function parses the information from the downloadable meeting information file in Zooms reports section.

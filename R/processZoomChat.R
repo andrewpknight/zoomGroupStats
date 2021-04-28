@@ -17,27 +17,16 @@
 #' fname=system.file('extdata', "sample_chat.txt", package = 'zoomGroupStats'), 
 #' sessionStartDateTime = '2020-04-20 13:30:00', 
 #' languageCode = 'en')
-processZoomChat = function(fname, sessionStartDateTime, languageCode) {
+processZoomChat = function(fname, sessionStartDateTime="1970-01-01 00:00:00", languageCode="en") {
   
   # NOTE: Need to fix this to remove any stray tabs from this file before bringing it in. I have run into a few edge cases where participants use tabs in their messages and it screws up the file. Need to experiment with this and introduce (likely) a brute force parser for this file. 
   
   ch = utils::read.delim(fname, sep="\t", stringsAsFactors=F, header=F, col.names=c("messageIncrement", "userName", "message"), quote="")
   
+  sessionStartDateTime = as.POSIXct(sessionStartDateTime, tz=Sys.timezone())
   
-  ####################################
-  # First thing do to is to create a message_time variable
-  
-  # This is user-supplied and could come from the usermeeting report that can be downloaded
-  sessionStartDateTime = as.POSIXct(sessionStartDateTime)
-  
-  # This is the value embedded in the chat record. It is an HH:MM:SS delta from the start of the session
-  # I'm doing a crude parse to just get the total number of seconds that the delta is. This is then
-  # used as the increment from the sessionStartDateTime
-  ch$incHours = as.numeric(substr(ch$messageIncrement,1,2))
-  ch$incMins = as.numeric(substr(ch$messageIncrement,4,5))	
-  ch$incSecs = as.numeric(substr(ch$messageIncrement,7,8))		
-  ch$incTotalSecs = ch$incHours*60*60 + ch$incMins*60 + ch$incSecs
-  ch$messageTime = sessionStartDateTime + ch$incTotalSecs
+  ch$messageSeconds = as.numeric(lubridate::seconds(lubridate::hms(ch$messageIncrement)))
+  ch$messageTime = sessionStartDateTime + ch$messageSeconds
   
   ####################################
   # Chat transcripts do not handle soft returns well (i.e., if the same person uses a soft line break 
@@ -81,5 +70,5 @@ processZoomChat = function(fname, sessionStartDateTime, languageCode) {
   ch$userName = ifelse(ch$userName == "" | is.na(ch$userName), "UNIDENTIFIED", ch$userName)	
   
   # Clean up the ordering of variables that are returned and return
-  return(ch[, c("messageId", "messageTime", "userName", "message", "messageLanguage")])
+  return(ch[, c("messageId", "messageSeconds", "messageTime", "userName", "message", "messageLanguage")])
 }
