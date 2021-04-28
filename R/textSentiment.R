@@ -7,7 +7,7 @@
 #' However you authenticate for AWS, you should do so before running the function.
 #'
 #' @param inputData data.frame that has been output by either the processZoomTranscript or processZoomChat functions 
-#' @param idVar name of variable that gives the unique identifier for the speaker/writer of each piece of text 
+#' @param idVar name of variable that gives the unique identifier for this piece of text
 #' @param textVar name of variable that contains the text
 #' @param languageCodeVar name of variable that contains the language code
 #'
@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-#' sent.out = textSentiment(inputData=sample_transcript_processed, idVar='userName', 
+#' sent.out = textSentiment(inputData=sample_transcript_processed, idVar='utteranceId', 
 #' textVar='utteranceMessage', languageCodeVar='utteranceLanguage')
 textSentiment = function(inputData, idVar, textVar, languageCodeVar){
   # This is simply to avoid throwing notes on a check
