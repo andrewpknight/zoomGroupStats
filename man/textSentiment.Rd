@@ -9,7 +9,7 @@ textSentiment(inputData, idVar, textVar, languageCodeVar)
 \arguments{
 \item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
 
-\item{idVar}{name of variable that gives the unique identifier for the speaker/writer of each piece of text}
+\item{idVar}{name of variable that gives the unique identifier for this piece of text}
 
 \item{textVar}{name of variable that contains the text}
 
@@ -26,6 +26,6 @@ To use this function, you must have an aws account that with privileges for the 
 However you authenticate for AWS, you should do so before running the function.
 }
 \examples{
-sent.out = textSentiment(inputData=sample_transcript_processed, idVar='userName', 
+sent.out = textSentiment(inputData=sample_transcript_processed, idVar='utteranceId', 
 textVar='utteranceMessage', languageCodeVar='utteranceLanguage')
 }
