@@ -51,4 +51,5 @@ textSentiment = function(inputData, idVar, textVar, sentMethods, languageCodeVar
     names(syuOutput)[1] = idVar
     returnList[["syuzhet"]] = syuOutput
   }	
+  return(returnList)
 }
