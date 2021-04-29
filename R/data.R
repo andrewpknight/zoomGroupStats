@@ -15,7 +15,6 @@
 #' @source \url{http://apknight.org/}
 "sample_transcript_processed"
 
-
 #' Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.
 #' 
 #' @format A data frame with 10 rows of 9 variables: 
@@ -65,3 +64,63 @@
 #' }
 #' @source \url{http://apknight.org/}
 "sample_transcript_sentiment_syu"
+
+#' Parsed chat file in a Zoom meeting
+#' 
+#' @format A data frame with 10 rows of 6 variables: 
+#' \describe{
+#' \item{messageId}{an incremented numeric identifier for a marked chat message}
+#' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
+#' \item{messageTime}{timestamp for message}
+#' \item{userName}{Zoom display name attached to the messager}
+#' \item{message}{text of the message}
+#' \item{messageLanguage}{language code of the message}
+#' }
+#' @source \url{http://apknight.org/}
+"sample_chat_processed"
+
+
+#' Parsed chat file in a Zoom meeting with sentiment analysis using AWS
+#' 
+#' @format A data frame with 10 rows of 6 variables: 
+#' \describe{
+#' \item{messageId}{an incremented numeric identifier for a marked chat message}
+#' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
+#' \item{messageTime}{timestamp for message}
+#' \item{userName}{Zoom display name attached to the messager}
+#' \item{message}{text of the message}
+#' \item{messageLanguage}{language code of the message}
+#' \item{aws_sentClass}{character giving the sentiment classification of this text}
+#' \item{aws_positive}{probability that this text is mixed emotion}
+#' \item{aws_negative}{probability that this text is negative}
+#' \item{aws_neutral}{probability that this text is neutral}
+#' \item{aws_mixed}{probability that this text is positive}
+#' }
+#' @source \url{http://apknight.org/}
+"sample_chat_sentiment_aws"
+
+
+#' Parsed chat file in a Zoom meeting with sentiment analysis using syuzhet
+#' 
+#' @format A data frame with 10 rows of 6 variables: 
+#' \describe{
+#' \item{messageId}{an incremented numeric identifier for a marked chat message}
+#' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
+#' \item{messageTime}{timestamp for message}
+#' \item{userName}{Zoom display name attached to the messager}
+#' \item{message}{text of the message}
+#' \item{messageLanguage}{language code of the message}
+#' \item{wordCount}{number of words in this utterance}
+#' \item{syu_anger}{number of anger words}
+#' \item{syu_anticipation}{number of anticipation words}
+#' \item{syu_disgust}{number of disgust words}
+#' \item{syu_fear}{number of fear words}
+#' \item{syu_joy}{number of joy words}
+#' \item{syu_sadness}{number of sadness words}
+#' \item{syu_surprise}{number of surprise words}
+#' \item{syu_trust}{number of trust words}
+#' \item{syu_negative}{number of negative words}
+#' \item{syu_positive}{number of positive words}
+#' }
+#' @source \url{http://apknight.org/}
+"sample_chat_sentiment_syu"

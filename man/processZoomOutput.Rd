@@ -9,6 +9,7 @@ and fileRoot_participants.csv. Any relevant files will be processed.}
 \usage{
 processZoomOutput(
   fileRoot,
+  rosetta = TRUE,
   sessionStartDateTime = "1970-01-01 00:00:00",
   recordingStartDateTime = "1970-01-01 00:00:00",
   languageCode = "en"
@@ -16,6 +17,8 @@ processZoomOutput(
 }
 \arguments{
 \item{fileRoot}{string giving the path to the files and the root}
+
+\item{rosetta}{boolean to produce the rosetta file or not}
 
 \item{sessionStartDateTime}{string giving the start of the session in YYYY-MM-DD HH:MM:SS}
 
@@ -35,6 +38,6 @@ and fileRoot_participants.csv. Any relevant files will be processed.
 }
 \examples{
 \dontrun{
-zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting")
+zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting", rosetta=TRUE)
 }
 }

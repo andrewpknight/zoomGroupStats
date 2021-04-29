@@ -6,6 +6,7 @@ Authors@R:
            family = "Knight",
            role = c("aut", "cre"),
            email = "knightap@wustl.edu")
+URL: http://apknight.org
 Description: zoomGroupStats provides utilities for processing and analyzing the files that are exported from a recorded Zoom Meeting. This includes analyzing data captured through video cameras and microphones, the text-based chat, and meta-data. You can analyze aspects of the conversation among meeting participants and their emotional expressions throughout the meeting.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -18,7 +19,6 @@ Imports:
     lubridate,
     magick,
     paws,
-    reshape2,
     stringr,
     syuzhet,
     utils

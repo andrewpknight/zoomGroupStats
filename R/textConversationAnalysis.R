@@ -16,6 +16,22 @@
 #' @examples
 #' convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
 #' inputType='transcript', speakerId='userName', sentMethod="none")
+#' 
+#' convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
+#' inputType='transcript', speakerId='userName', sentMethod="aws")
+#' 
+#' convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_syu, 
+#' inputType='transcript', speakerId='userName', sentMethod="syuzhet")
+#' 
+#' convo.out = textConversationAnalysis(inputData=sample_chat_processed, 
+#' inputType='chat', speakerId='userName', sentMethod="none")
+#' 
+#' convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_aws, 
+#' inputType='chat', speakerId='userName', sentMethod="aws")
+#' 
+#' convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_syu, 
+#' inputType='chat', speakerId='userName', sentMethod="syuzhet")
+
 textConversationAnalysis = function(inputData, inputType, speakerId, sentMethod="none") {
 
   utteranceStartTime<-utteranceEndTime<-utteranceTimeWindow<-utteranceGap<-sd<-messageTime<-messageNumChars<-messageGap<-NULL
