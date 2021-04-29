@@ -2,28 +2,42 @@
 #' This is just a simple helper function that is used to aggregate the 
 #' sentiment variables
 #' @param inputData data.frame that has been output from textSentiment function
-#' @param speakerId string that indicates the name of the variable containing the speaker identity
+#' @param groupBy string that indicates the name of the variable containing the speaker identity
+#' @param sentMethod string that indicates what type of sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'
 #' @import data.table
 #' @return A list with data.frames. The first gives sentiment variables at the corpus level of analysis
 #' The second gives sentiment variables at the speaker level of analysis.
 #' @export
 #'
 #' @examples
-#' agg.out = aggSentiment(inputData=sample_transcript_sentiment_processed, speakerId="userName")
-aggSentiment = function(inputData, speakerId) {
+#' agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
+#' groupBy="userName", sentMethod="aws")
+#' agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
+#' groupBy="userName", sentMethod="syuzhet")
+aggSentiment = function(inputData, groupBy, sentMethod) {
   
-  sentClass <- positive <- sd <- negative <- neutral <- mixed <- NULL
+  aws_sentClass <- sd <- NULL
   
-  sent.dt = data.table::data.table(inputData)
+  sentDt = data.table::data.table(inputData)
+  if(sentMethod == "aws") {
+    aws_sentClasses = c("POSITIVE", "NEGATIVE", "MIXED", "NEUTRAL")
+    awsContVars = paste0("aws_", tolower(aws_sentClasses))
+    awsClassVars = paste0(awsContVars, "_class")
+    sentDt[, (awsClassVars) := lapply(aws_sentClasses, function(x) aws_sentClass == x)]
+    
+    agg1 = data.frame(sentDt[, as.list(unlist(lapply(.SD, function(x) list(mean = mean(x, na.rm=T), sd=sd(x, na.rm=T), sum=sum(x, na.rm=T), pct=sum(x, na.rm=T)/.N)))), by=list(get(groupBy)), .SDcols=c(awsContVars, awsClassVars)])
+    names(agg1)[1]= groupBy
+    agg1 = agg1[, c(groupBy, paste0(awsContVars, ".mean"), paste0(awsContVars, ".sd"), paste0(awsClassVars, ".sum"), paste0(awsClassVars, ".pct"))]	
+    sentOut = agg1
+  }
   
-  # Create the transcript level sentiment information
-  sent.tr = data.frame(sent.dt[, list(text_positive_pct = sum(sentClass=="POSITIVE")/.N, text_positive_x = mean(positive, na.rm=T), text_positive_sd = sd(positive, na.rm=T), text_negative_pct = sum(sentClass=="NEGATIVE")/.N, text_negative_x = mean(negative, na.rm=T), text_negative_sd = sd(negative, na.rm=T), text_neutral_pct = sum(sentClass=="NEUTRAL")/.N, text_neutral_x = mean(neutral, na.rm=T), text_neutral_sd = sd(neutral, na.rm=T), text_mixed_pct = sum(sentClass=="MIXED")/.N, text_mixed_x = mean(mixed, na.rm=T), text_mixed_sd = sd(mixed, na.rm=T))])
-  
-  # Create the user level sentiment information	
-  sent.ind = data.frame(sent.dt[, list(text_positive_pct = sum(sentClass=="POSITIVE")/.N, text_positive_x = mean(positive, na.rm=T), text_positive_sd = sd(positive, na.rm=T), text_negative_pct = sum(sentClass=="NEGATIVE")/.N, text_negative_x = mean(negative, na.rm=T), text_negative_sd = sd(negative, na.rm=T), text_neutral_pct = sum(sentClass=="NEUTRAL")/.N, text_neutral_x = mean(neutral, na.rm=T), text_neutral_sd = sd(neutral, na.rm=T), text_mixed_pct = sum(sentClass=="MIXED")/.N, text_mixed_x = mean(mixed, na.rm=T), text_mixed_sd = sd(mixed, na.rm=T)), by=list(get(speakerId))])
-  names(sent.ind)[1] = speakerId
-  
-  return(list(sent.tr, sent.ind))
-  
+  if(sentMethod == "syuzhet") {
+    
+    syuVars = paste0("syu_",c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust", "negative", "positive"))
+    agg1 = data.frame(sentDt[, as.list(unlist(lapply(.SD, function(x) list(sum=sum(x, na.rm=T), pct=sum(x, na.rm=T)/.N)))), by=list(get(groupBy)), .SDcols=syuVars])
+    names(agg1)[1]= groupBy
+    agg1 = agg1[, c(groupBy, paste0(syuVars, ".sum"), paste0(syuVars, ".pct"))]	
+    sentOut = agg1
+  }
+  return(sentOut)
 }
-

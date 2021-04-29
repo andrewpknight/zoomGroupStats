@@ -6,12 +6,14 @@
 This is just a simple helper function that is used to aggregate the
 sentiment variables}
 \usage{
-aggSentiment(inputData, speakerId)
+aggSentiment(inputData, groupBy, sentMethod)
 }
 \arguments{
 \item{inputData}{data.frame that has been output from textSentiment function}
 
-\item{speakerId}{string that indicates the name of the variable containing the speaker identity}
+\item{groupBy}{string that indicates the name of the variable containing the speaker identity}
+
+\item{sentMethod}{string that indicates what type of sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'}
 }
 \value{
 A list with data.frames. The first gives sentiment variables at the corpus level of analysis
@@ -23,5 +25,8 @@ This is just a simple helper function that is used to aggregate the
 sentiment variables
 }
 \examples{
-agg.out = aggSentiment(inputData=sample_transcript_sentiment_processed, speakerId="userName")
+agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
+groupBy="userName", sentMethod="aws")
+agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
+groupBy="userName", sentMethod="syuzhet")
 }
