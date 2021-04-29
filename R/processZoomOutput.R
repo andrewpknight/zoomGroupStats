@@ -3,6 +3,7 @@
 #' files should be named as fileRoot_chat.txt; fileRoot_transcript.vtt; 
 #' and fileRoot_participants.csv. Any relevant files will be processed.
 #' @param fileRoot string giving the path to the files and the root
+#' @param rosetta boolean to produce the rosetta file or not
 #' @param sessionStartDateTime  string giving the start of the session in YYYY-MM-DD HH:MM:SS
 #' @param recordingStartDateTime  string giving the start of the recording in YYYY-MM-DD HH:MM:SS 
 #' @param languageCode string giving the language code
@@ -13,9 +14,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting")
+#' zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting", rosetta=TRUE)
 #' }
-processZoomOutput = function(fileRoot, sessionStartDateTime="1970-01-01 00:00:00", recordingStartDateTime="1970-01-01 00:00:00", languageCode="en") {
+processZoomOutput = function(fileRoot, rosetta=TRUE, sessionStartDateTime="1970-01-01 00:00:00", recordingStartDateTime="1970-01-01 00:00:00", languageCode="en") {
   
   out.list = list()
   participantsFile = paste(fileRoot, "_participants.csv", sep="")
@@ -33,13 +34,16 @@ processZoomOutput = function(fileRoot, sessionStartDateTime="1970-01-01 00:00:00
   }
   
   if(file.exists(chatFile)) {
-    ch.out = processZoomChat(fname=chatFile, sessionStartDateTime=sessionStartDateTime, languageCode=languageCode)
-    out.list[["chat"]] = ch.out
+    out.list[["chat"]] = processZoomChat(fname=chatFile, sessionStartDateTime=sessionStartDateTime, languageCode=languageCode)
   }
   
   if(file.exists(transcriptFile)) {
-    tr.out = processZoomTranscript(fname=transcriptFile, recordingStartDateTime=recordingStartDateTime, languageCode=languageCode)
-    out.list[["transcript"]] = tr.out
+    out.list[["transcript"]] = processZoomTranscript(fname=transcriptFile, recordingStartDateTime=recordingStartDateTime, languageCode=languageCode)
   }	
+  
+  if(rosetta) {
+    out.list[["rosetta"]] = createZoomRosetta(out.list)
+  }
+  
   return(out.list)
 }
