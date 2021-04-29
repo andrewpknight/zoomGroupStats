@@ -4,9 +4,8 @@
 #' function across a set of windows at a window size specified by the user. 
 #' @param inputData data.frame output of either processZoomTranscript or processZoomChat
 #' @param inputType string of either 'chat' or 'transcript'
-#' @param speakerId string giving the variable name of the user identity
-#' @param doSentiment boolean indicating whether you want the sentiment analysis
-#' @param sentiDone boolean indicating whether inputData already has the sentiment done
+#' @param speakerId string giving the name of the identifier for the individual who made this contribution
+#' @param sentMethod string giving the type of sentiment analysis to include, either 'aws' or 'syuzhet'
 #' @param timeVar name of variable giving the time marker to be used.
 #'  For transcript, either use 'utteranceStartSeconds' or 'utteranceEndSeconds'; 
 #'  for chat use 'messageTime' 
@@ -18,9 +17,9 @@
 #'
 #' @examples
 #' win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_processed, 
-#' inputType="transcript", speakerId="userName", doSentiment=FALSE, 
-#' sentiDone=FALSE, timeVar="utteranceStartSeconds", windowSize=300)
-windowedTextConversationAnalysis = function(inputData, inputType, speakerId, doSentiment=FALSE, sentiDone=FALSE, timeVar, windowSize) {
+#' inputType="transcript", speakerId="userName", sentMethod="none", 
+#' timeVar="utteranceStartSeconds", windowSize=300)
+windowedTextConversationAnalysis = function(inputData, inputType, speakerId, sentMethod="none", timeVar, windowSize) {
   
   # We need to add a variable to the chat out that is number of seconds
   if(inputType=="chat" && timeVar=="messageTime") {
@@ -51,7 +50,7 @@ windowedTextConversationAnalysis = function(inputData, inputType, speakerId, doS
     # run the analysis if there are any pieces of text in this window
     if(nrow(windowed.input) > 0) {
       
-      res.line = textConversationAnalysis(inputData=windowed.input, inputType=inputType, speakerId=speakerId, doSentiment=doSentiment, sentiDone=sentiDone)
+      res.line = textConversationAnalysis(inputData=windowed.input, inputType=inputType, speakerId=speakerId, sentMethod=sentMethod)
       grp.res.line = res.line[[1]]
       grp.res.line$windowId = win
       ind.res.line = res.line[[2]]
@@ -82,5 +81,5 @@ windowedTextConversationAnalysis = function(inputData, inputType, speakerId, doS
   
   grp1 = merge(t.out.windowed[[2]], grp.res.out, by=c("windowId"), all.x=T)
   grp1[, grp.fixVars] = lapply(grp1[,grp.fixVars], function(x) ifelse(is.na(x), 0, x))	
-  return(list("WINDOW-LEVEL" = grp1, "SPEAKER-LEVEL" = indFull))
+  return(list("windowlevel" = grp1, "speakerlevel" = indFull))
 }

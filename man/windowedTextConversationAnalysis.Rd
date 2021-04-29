@@ -11,8 +11,7 @@ windowedTextConversationAnalysis(
   inputData,
   inputType,
   speakerId,
-  doSentiment = FALSE,
-  sentiDone = FALSE,
+  sentMethod = "none",
   timeVar,
   windowSize
 )
@@ -22,11 +21,9 @@ windowedTextConversationAnalysis(
 
 \item{inputType}{string of either 'chat' or 'transcript'}
 
-\item{speakerId}{string giving the variable name of the user identity}
+\item{speakerId}{string giving the name of the identifier for the individual who made this contribution}
 
-\item{doSentiment}{boolean indicating whether you want the sentiment analysis}
-
-\item{sentiDone}{boolean indicating whether inputData already has the sentiment done}
+\item{sentMethod}{string giving the type of sentiment analysis to include, either 'aws' or 'syuzhet'}
 
 \item{timeVar}{name of variable giving the time marker to be used.
 For transcript, either use 'utteranceStartSeconds' or 'utteranceEndSeconds';
@@ -46,6 +43,6 @@ function across a set of windows at a window size specified by the user.
 }
 \examples{
 win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_processed, 
-inputType="transcript", speakerId="userName", doSentiment=FALSE, 
-sentiDone=FALSE, timeVar="utteranceStartSeconds", windowSize=300)
+inputType="transcript", speakerId="userName", sentMethod="none", 
+timeVar="utteranceStartSeconds", windowSize=300)
 }

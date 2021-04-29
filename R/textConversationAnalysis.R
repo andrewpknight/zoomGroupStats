@@ -1,11 +1,10 @@
 #' Analyze conversation attributes
 #' This function takes in the output of one of the other functions (either processZoomChat or processZoomTranscript) 
 #' and produces a set of conversation measures.
-#' @param inputData data.frame
-#' @param inputType character
-#' @param speakerId character
-#' @param doSentiment boolean
-#' @param sentiDone boolean
+#' @param inputData data.frame that is the output of either processZoomChat or processZoomTranscript
+#' @param inputType string of either 'transcript' or 'chat'
+#' @param speakerId string giving the name of the identifier for the individual who made this contribution
+#' @param sentMethod string giving the type of sentiment analysis to include, either 'aws' or 'syuzhet'
 #'
 #' @return 
 #' A list of two data.frames, with names conditional on your choice to analyze
@@ -16,8 +15,8 @@
 #'
 #' @examples
 #' convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
-#' inputType='transcript', speakerId='userName', doSentiment=FALSE, sentiDone=FALSE)
-textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment=FALSE, sentiDone=FALSE) {
+#' inputType='transcript', speakerId='userName', sentMethod="none")
+textConversationAnalysis = function(inputData, inputType, speakerId, sentMethod="none") {
 
   utteranceStartTime<-utteranceEndTime<-utteranceTimeWindow<-utteranceGap<-sd<-messageTime<-messageNumChars<-messageGap<-NULL
   
@@ -50,21 +49,17 @@ textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment
     # Address the sentiment analysis
     ########################################		
     
-    if(doSentiment) {
-      
-      # If sentiment is not already done, we need to do it
-      if(!sentiDone) {
-        inputData = textSentiment(inputData=inputData, idVar="utteranceId", textVar="utteranceMessage", languageCodeVar="utteranceLanguage")
-      }
-      
-      aggSentimentOut = aggSentiment(inputData, speakerId)
-      text.out.tr = cbind(agg.tr, aggSentimentOut[[1]])
-      text.out.ind = merge(agg.ind, aggSentimentOut[[2]], by=speakerId)
+    if(sentMethod %in% c("aws", "syuzhet")) {
+      inputData$fullSet = 1
+      aggSentiment.tr = aggSentiment(inputData, "fullSet", sentMethod)
+      aggSentiment.ind = aggSentiment(inputData, speakerId, sentMethod)      
+      text.out.tr = cbind(agg.tr, aggSentiment.tr)
+      text.out.ind = merge(agg.ind, aggSentiment.ind, by=speakerId)
     } else {
       text.out.tr = agg.tr
       text.out.ind = agg.ind
     }
-    res.out = list("TRANSCRIPT-LEVEL" = text.out.tr, "SPEAKER-LEVEL" = text.out.ind)
+    res.out = list("transcriptlevel" = text.out.tr, "speakerlevel" = text.out.ind)
     
     ########################################
     # IF THE USER REQUESTED AN ANALYSIS OF A CHAT FILE, DO THE FOLLOWING
@@ -92,19 +87,16 @@ textConversationAnalysis = function(inputData, inputType, speakerId, doSentiment
     ########################################
     # Address the sentiment analysis
     ########################################				
-    if(doSentiment) {
-      
-      if(!sentiDone) {
-        inputData = textSentiment(inputData = inputData, idVar="messageId", textVar = "message", languageCodeVar="messageLanguage")
-      }
-      
-      aggSentimentOut = aggSentiment(inputData, speakerId)
-      text.out.ch = cbind(agg.ch, aggSentimentOut[[1]])
-      text.out.ind = merge(agg.ind, aggSentimentOut[[2]], by=speakerId)			
-    } else {
+      if(sentMethod %in% c("aws", "syuzhet")) {
+        inputData$fullSet = 1
+        aggSentiment.ch = aggSentiment(inputData, "fullSet", sentMethod)
+        aggSentiment.ind = aggSentiment(inputData, speakerId, sentMethod)      
+        text.out.ch = cbind(agg.ch, aggSentiment.ch)
+        text.out.ind = merge(agg.ind, aggSentiment.ind, by=speakerId)
+      } else {
       text.out.ch = agg.ch
       text.out.ind = agg.ind
     }
-    res.out = list("CHAT-LEVEL" = text.out.ch, "USER-LEVEL" = text.out.ind)			
+    res.out = list("chatlevel" = text.out.ch, "userlevel" = text.out.ind)			
   }
 }

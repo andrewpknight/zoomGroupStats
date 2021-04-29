@@ -6,24 +6,16 @@
 This function takes in the output of one of the other functions (either processZoomChat or processZoomTranscript)
 and produces a set of conversation measures.}
 \usage{
-textConversationAnalysis(
-  inputData,
-  inputType,
-  speakerId,
-  doSentiment = FALSE,
-  sentiDone = FALSE
-)
+textConversationAnalysis(inputData, inputType, speakerId, sentMethod = "none")
 }
 \arguments{
-\item{inputData}{data.frame}
+\item{inputData}{data.frame that is the output of either processZoomChat or processZoomTranscript}
 
-\item{inputType}{character}
+\item{inputType}{string of either 'transcript' or 'chat'}
 
-\item{speakerId}{character}
+\item{speakerId}{string giving the name of the identifier for the individual who made this contribution}
 
-\item{doSentiment}{boolean}
-
-\item{sentiDone}{boolean}
+\item{sentMethod}{string giving the type of sentiment analysis to include, either 'aws' or 'syuzhet'}
 }
 \value{
 A list of two data.frames, with names conditional on your choice to analyze
@@ -38,5 +30,5 @@ and produces a set of conversation measures.
 }
 \examples{
 convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
-inputType='transcript', speakerId='userName', doSentiment=FALSE, sentiDone=FALSE)
+inputType='transcript', speakerId='userName', sentMethod="none")
 }
