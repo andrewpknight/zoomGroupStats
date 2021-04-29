@@ -4,7 +4,7 @@
 \alias{textSentiment}
 \title{Conduct a sentiment analysis on text data}
 \usage{
-textSentiment(inputData, idVar, textVar, languageCodeVar)
+textSentiment(inputData, idVar, textVar, sentMethods, languageCodeVar)
 }
 \arguments{
 \item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
@@ -13,19 +13,25 @@ textSentiment(inputData, idVar, textVar, languageCodeVar)
 
 \item{textVar}{name of variable that contains the text}
 
+\item{sentMethods}{a vector specifying the types of sentiment analysis-currently
+either "aws" or "syuzhet"}
+
 \item{languageCodeVar}{name of variable that contains the language code}
 }
 \value{
-returns the inputData with sentiment analysis variables appended
+returns a list containing as data.frames the output of the sentiment analyses
+that were requested in sentMethods. For each output data.frame, the first column
+is the idVar specified to enable combining back with the original inputData
 }
 \description{
 This function takes in the output of the chat and transcript functions. It then
 conducts a sentiment analysis on an identified chunk of text
 and returns the values.
-To use this function, you must have an aws account that with privileges for the comprehend service
-However you authenticate for AWS, you should do so before running the function.
+To use the aws option, you must have an aws account that with privileges for the comprehend service
+However you authenticate for AWS, you should do so before running calling the function
+with this option in sentMethods
 }
 \examples{
 sent.out = textSentiment(inputData=sample_transcript_processed, idVar='utteranceId', 
-textVar='utteranceMessage', languageCodeVar='utteranceLanguage')
+textVar='utteranceMessage', sentMethods='syuzhet', languageCodeVar='utteranceLanguage')
 }

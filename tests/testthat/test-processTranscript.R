@@ -5,4 +5,6 @@ test_that("Transcript parsing yields correct records", {
   expect_equal(length(unique(tr.out$userName)), 6)
   expect_equal(lubridate::is.POSIXct(tr.out$utteranceStartTime), TRUE)
   expect_equal(lubridate::is.POSIXct(tr.out$utteranceEndTime), TRUE)  
+  expect_equal(is.numeric(tr.out$utteranceStartSeconds), TRUE)
+  expect_equal(is.numeric(tr.out$utteranceEndSeconds), TRUE)  
 })

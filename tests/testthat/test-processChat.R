@@ -4,5 +4,6 @@ test_that("Chat parsing yields correct records", {
   expect_equal(nrow(ch.out), 10)
   expect_equal(length(unique(ch.out$userName)), 5)
   expect_equal(lubridate::is.POSIXct(ch.out$messageTime), TRUE)
+  expect_equal(is.numeric(ch.out$messageSeconds), TRUE)
   
 })

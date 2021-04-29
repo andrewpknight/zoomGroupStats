@@ -20,6 +20,7 @@ Imports:
     paws,
     reshape2,
     stringr,
+    syuzhet,
     utils
 Suggests: 
     testthat (>= 3.0.0)

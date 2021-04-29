@@ -55,7 +55,7 @@ processZoomChat = function(fname, sessionStartDateTime="1970-01-01 00:00:00", la
   ch = ch[ch$flag == 0, ]
   
   # get rid of whitespace at the beginning and end
-  ch$message = stringr::str_trim(ch$message, "both")
+  ch$message = gsub("^\\s+|\\s+$", "", ch$message)
   
   # Add a language variable, which is user-supplied for now
   ch$messageLanguage = languageCode
