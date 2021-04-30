@@ -42,7 +42,7 @@ textConversationAnalysis = function(inputData, inputType, meetingId, speakerId, 
   ########################################			
   
   if(inputType=="transcript") {
-    
+    inputData = inputData[order(inputData$utteranceStartSeconds), ]
     ########################################
     # Create a base transcript-level output for this transcript
     ########################################
@@ -83,7 +83,7 @@ textConversationAnalysis = function(inputData, inputType, meetingId, speakerId, 
     ########################################		
     
   } else if(inputType=="chat") {
-    
+    inputData = inputData[order(inputData$messageTime), ]    
     ########################################
     # Create a base chat-level output
     ########################################

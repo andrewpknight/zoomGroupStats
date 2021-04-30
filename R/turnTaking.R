@@ -26,9 +26,11 @@ turnTaking = function(inputData, inputType, speakerId) {
 inputData$speakerCurrent = inputData[,speakerId]
 
 if(inputType == "transcript") {
+  inputData = inputData[order(inputData$utteranceEndSeconds), ]
   inputData[, c("speakerBefore", "priorUtteranceEndSeconds")] = dplyr::lag(inputData[, c("speakerCurrent", "utteranceEndSeconds")])
   inputData$turnGap = inputData$utteranceStartSeconds - inputData$priorUtteranceEndSeconds
 } else if(inputType == "chat") {
+  inputData = inputData[order(inputData$messageTime), ]  
   inputData[, c("speakerBefore", "priorMessageTime")] = dplyr::lag(inputData[, c("speakerCurrent", "messageTime")])
   inputData$turnGap = as.numeric(difftime(inputData$messageTime, inputData$priorMessageTime, units="secs"))
 }
