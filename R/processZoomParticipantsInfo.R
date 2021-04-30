@@ -19,7 +19,7 @@
 #' )
 processZoomParticipantsInfo = function(inputPath) {
   
-  meetInfo = utils::read.table(inputPath, header=F, nrows=1, skip=1, sep=",", stringsAsFactors=F)
+  meetInfo = utils::read.table(inputPath, header=F, nrows=1, skip=1, sep=",", stringsAsFactors=F, colClasses=c(rep("character", 5), "numeric", "numeric", "character"))
   meetInfo = meetInfo[,1:7]
   names(meetInfo) = c("meetingId", "meetingTopic", "meetingStartTime", "meetingEndTime", "userEmail", "meetingDuration", "numParticipants")
   

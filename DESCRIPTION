@@ -18,6 +18,7 @@ Imports:
     dplyr,
     lubridate,
     magick,
+    openxlsx,
     paws,
     stringr,
     syuzhet,
