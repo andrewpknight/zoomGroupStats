@@ -10,6 +10,7 @@ function across a set of windows at a window size specified by the user.}
 windowedTextConversationAnalysis(
   inputData,
   inputType,
+  meetingId,
   speakerId,
   sentMethod = "none",
   timeVar,
@@ -20,6 +21,8 @@ windowedTextConversationAnalysis(
 \item{inputData}{data.frame output of either processZoomTranscript or processZoomChat}
 
 \item{inputType}{string of either 'chat' or 'transcript'}
+
+\item{meetingId}{string giving the column with the meeting identifier}
 
 \item{speakerId}{string giving the name of the identifier for the individual who made this contribution}
 
@@ -42,7 +45,7 @@ either a Zoom transcript or chat. It replicates the textConversationAnalysis
 function across a set of windows at a window size specified by the user.
 }
 \examples{
-win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_processed, 
-inputType="transcript", speakerId="userName", sentMethod="none", 
-timeVar="utteranceStartSeconds", windowSize=300)
+win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
+inputType="transcript", meetingId="batchMeetingId", speakerId="userName", sentMethod="aws", 
+timeVar="utteranceStartSeconds", windowSize=600)
 }

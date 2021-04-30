@@ -6,12 +6,20 @@
 This function takes in the output of one of the other functions (either processZoomChat or processZoomTranscript)
 and produces a set of conversation measures.}
 \usage{
-textConversationAnalysis(inputData, inputType, speakerId, sentMethod = "none")
+textConversationAnalysis(
+  inputData,
+  inputType,
+  meetingId,
+  speakerId,
+  sentMethod = "none"
+)
 }
 \arguments{
 \item{inputData}{data.frame that is the output of either processZoomChat or processZoomTranscript}
 
 \item{inputType}{string of either 'transcript' or 'chat'}
+
+\item{meetingId}{string giving the name of the variable with the meetingId}
 
 \item{speakerId}{string giving the name of the identifier for the individual who made this contribution}
 
@@ -30,20 +38,20 @@ and produces a set of conversation measures.
 }
 \examples{
 convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
-inputType='transcript', speakerId='userName', sentMethod="none")
+inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="none")
 
 convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
-inputType='transcript', speakerId='userName', sentMethod="aws")
+inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="aws")
 
 convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_syu, 
-inputType='transcript', speakerId='userName', sentMethod="syuzhet")
+inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="syuzhet")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_processed, 
-inputType='chat', speakerId='userName', sentMethod="none")
+inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="none")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_aws, 
-inputType='chat', speakerId='userName', sentMethod="aws")
+inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="aws")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_syu, 
-inputType='chat', speakerId='userName', sentMethod="syuzhet")
+inputType='chat',meetingId='batchMeetingId',  speakerId='userName', sentMethod="syuzhet")
 }

@@ -6,12 +6,14 @@
 This is just a simple helper function that is used to aggregate the
 sentiment variables}
 \usage{
-aggSentiment(inputData, groupBy, sentMethod)
+aggSentiment(inputData, meetingId, indivId, sentMethod)
 }
 \arguments{
 \item{inputData}{data.frame that has been output from textSentiment function}
 
-\item{groupBy}{string that indicates the name of the variable containing the speaker identity}
+\item{meetingId}{string that indicates the name of the variable containing the meeting ID}
+
+\item{indivId}{string that indicates the name of the variable containing the speaker identity}
 
 \item{sentMethod}{string that indicates what type of sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'}
 }
@@ -26,7 +28,8 @@ sentiment variables
 }
 \examples{
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
-groupBy="userName", sentMethod="aws")
+meetingId="batchMeetingId", indivId = "userId", sentMethod="aws")
+
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
-groupBy="userName", sentMethod="syuzhet")
+meetingId="batchMeetingId", indivId = "userId", sentMethod="syuzhet")
 }

@@ -4,6 +4,7 @@
 #' function across a set of windows at a window size specified by the user. 
 #' @param inputData data.frame output of either processZoomTranscript or processZoomChat
 #' @param inputType string of either 'chat' or 'transcript'
+#' @param meetingId string giving the column with the meeting identifier
 #' @param speakerId string giving the name of the identifier for the individual who made this contribution
 #' @param sentMethod string giving the type of sentiment analysis to include, either 'aws' or 'syuzhet'
 #' @param timeVar name of variable giving the time marker to be used.
@@ -16,70 +17,84 @@
 #' @export 
 #'
 #' @examples
-#' win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_processed, 
-#' inputType="transcript", speakerId="userName", sentMethod="none", 
-#' timeVar="utteranceStartSeconds", windowSize=300)
-windowedTextConversationAnalysis = function(inputData, inputType, speakerId, sentMethod="none", timeVar, windowSize) {
-  
-  # We need to add a variable to the chat out that is number of seconds
-  if(inputType=="chat" && timeVar=="messageTime") {
-    inputData[, "messageTimeSeconds"] = as.numeric(difftime(inputData[,"messageTime"],min(inputData[,"messageTime"]),units="secs")) 
-    timeVar = "messageTimeSeconds"		
-  }
+#' win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
+#' inputType="transcript", meetingId="batchMeetingId", speakerId="userName", sentMethod="aws", 
+#' timeVar="utteranceStartSeconds", windowSize=600)
+windowedTextConversationAnalysis = function(inputData, inputType, meetingId, speakerId, sentMethod="none", timeVar, windowSize) {
   
   
-  # Add the windowing indicators to the inputData
-  t.out.windowed = makeTimeWindows(inputData=inputData, timeVar=timeVar, windowSize=windowSize)
-  inputData = t.out.windowed[[1]]
+  ##### WINDOWING NEEDS TO HAPPEN IN A MEETING-BY-MEETING SEQUENCE #####
   
-  # Create a blank set that gives each user an opportunity to have an aggregate
-  # metric during each of the time windows
+  uniqueMeetings = unique(inputData[,meetingId])
   
-  fullSet = cbind(t.out.windowed[[2]], sort(rep(unique(inputData[, speakerId]), max(t.out.windowed[[2]]$windowId))))
-  fullSet = fullSet[order(fullSet$windowId), ]
-  names(fullSet)[4] = speakerId
-  
-  # Now, go through each of the time windows and run the
-  # conversation analysis
-  grp.res.out = NULL
-  ind.res.out = NULL
-  for(win in 1:max(fullSet$windowId)) {
+  for(m in 1:length(uniqueMeetings)) {
+    thisMeetingId = uniqueMeetings[m]
+    meetingData = inputData[inputData[,meetingId] == thisMeetingId, ]
+    # We need to add a variable to the chat out that is number of seconds
+    if(inputType=="chat" && timeVar=="messageTime") {
+      meetingData[, "messageTimeSeconds"] = as.numeric(difftime(meetingData[,"messageTime"],min(meetingData[,"messageTime"]),units="secs")) 
+      timeVar = "messageTimeSeconds"		
+    }
+    # Add the windowing indicators to the inputData
+    t.out.windowed = makeTimeWindows(inputData=meetingData, timeVar=timeVar, windowSize=windowSize)
+    meetingData = t.out.windowed[[1]] 
+    fullSet = cbind(t.out.windowed[[2]], sort(rep(unique(meetingData[, speakerId]), max(t.out.windowed[[2]]$windowId))))
+    fullSet = fullSet[order(fullSet$windowId), ]
+    names(fullSet)[4] = speakerId
+    fullSet[,meetingId] = thisMeetingId 
     
-    windowed.input = inputData[inputData$windowId == win, ]
+    # Now, go through each of the time windows and run the
+    # conversation analysis
+    grp.res.out = NULL
+    ind.res.out = NULL
     
-    # run the analysis if there are any pieces of text in this window
-    if(nrow(windowed.input) > 0) {
+    for(win in 1:max(fullSet$windowId)) {
       
-      res.line = textConversationAnalysis(inputData=windowed.input, inputType=inputType, speakerId=speakerId, sentMethod=sentMethod)
-      grp.res.line = res.line[[1]]
-      grp.res.line$windowId = win
-      ind.res.line = res.line[[2]]
-      ind.res.line$windowId = win
+      windowed.input = meetingData[meetingData$windowId == win, ]
       
-      if(!exists("grp.res.out")) {
-        grp.res.out = grp.res.line
-        ind.res.out = ind.res.line
-      } else {
-        grp.res.out = rbind(grp.res.out, grp.res.line)
-        ind.res.out = rbind(ind.res.out, ind.res.line)
+      # run the analysis if there are any pieces of text in this window
+      if(nrow(windowed.input) > 0) {
+        
+        res.line = textConversationAnalysis(inputData=windowed.input, inputType=inputType, meetingId=meetingId, speakerId=speakerId, sentMethod=sentMethod)
+        grp.res.line = res.line[[1]]
+        grp.res.line$windowId = win
+        ind.res.line = res.line[[2]]
+        ind.res.line$windowId = win
+        
+        if(!exists("grp.res.out")) {
+          grp.res.out = grp.res.line
+          ind.res.out = ind.res.line
+        } else {
+          grp.res.out = rbind(grp.res.out, grp.res.line)
+          ind.res.out = rbind(ind.res.out, ind.res.line)
+        }
       }
     }
+    
+    if(inputType=="transcript") {
+      ind.fixVars = c("utteranceTimeWindow_sum", "numUtterances") 
+      grp.fixVars = c(ind.fixVars, "totalRecordedTime", "silentTime_sum", "numUniqueSpeakers")
+    } else if(inputType=="chat") {
+      ind.fixVars = c("numMessages", "messageNumChars_sum")
+      grp.fixVars = c(ind.fixVars, "numUniqueMessagers", "totalRecordedTime")
+    }
+    
+    # Add these to the full time window datasets
+    indFull = merge(fullSet, ind.res.out, by=c(meetingId, speakerId, "windowId"), all.x=T)
+    indFull[,ind.fixVars] = lapply(indFull[,ind.fixVars], function(x) ifelse(is.na(x), 0, x))
+    
+    grp1 = merge(t.out.windowed[[2]], grp.res.out, by=c("windowId"), all.x=T)
+    grp1[,meetingId] = thisMeetingId
+    grp1[, grp.fixVars] = lapply(grp1[,grp.fixVars], function(x) ifelse(is.na(x), 0, x))	
+    
+    ### that concludes the single meeting ###
+    if(!exists("full.grp")) {
+      full.grp = grp1
+      full.ind = indFull
+    } else {
+      full.grp = rbind(full.grp, grp1)
+      full.ind = rbind(full.ind, indFull)
+    }
   }
-  
-  # Add these to the full time window datasets
-  indFull = merge(fullSet, ind.res.out, by=c(speakerId, "windowId"), all.x=T)
-  
-  if(inputType=="transcript") {
-    ind.fixVars = c("utteranceTimeWindow_sum", "numUtterances") 
-    grp.fixVars = c(ind.fixVars, "totalRecordedTime", "silentTime_sum", "numUniqueSpeakers")
-  } else if(inputType=="chat") {
-    ind.fixVars = c("numMessages", "messageNumChars_sum")
-    grp.fixVars = c(ind.fixVars, "numUniqueMessagers", "totalRecordedTime")
-  }
-  
-  indFull[,ind.fixVars] = lapply(indFull[,ind.fixVars], function(x) ifelse(is.na(x), 0, x))
-  
-  grp1 = merge(t.out.windowed[[2]], grp.res.out, by=c("windowId"), all.x=T)
-  grp1[, grp.fixVars] = lapply(grp1[,grp.fixVars], function(x) ifelse(is.na(x), 0, x))	
-  return(list("windowlevel" = grp1, "speakerlevel" = indFull))
+  return(list("windowlevel" = full.grp, "speakerlevel" = full.ind))
 }

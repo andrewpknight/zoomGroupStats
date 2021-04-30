@@ -1,33 +1,39 @@
 #' Parsed spoken language in a Zoom meeting.
 #' 
-#' @format A data frame with 5 rows of 9 variables: 
+#' @format A data frame with 900 rows of 12 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
+#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
 #' \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 #' \item{utteranceStartTime}{timestamp for the start of the utterance}
 #' \item{utteranceEndSeconds}{when the utterance ended as the number of seconds from the start of the recording}
 #' \item{utteranceEndTime}{timestamp for the end of the utterance}
 #' \item{utteranceTimeWindow}{duration of the utterance, in seconds}
-#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceMessage}{the text of the utterance}
 #' \item{utteranceLanguage}{language code of the utterance}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' }
 #' @source \url{http://apknight.org/}
 "sample_transcript_processed"
 
 #' Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.
 #' 
-#' @format A data frame with 10 rows of 9 variables: 
+#' @format A data frame with 900 rows of 17 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
+#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 #' \item{utteranceStartTime}{timestamp for the start of the utterance}
 #' \item{utteranceEndSeconds}{when the utterance ended as the number of seconds from the start of the recording}
 #' \item{utteranceEndTime}{timestamp for the end of the utterance}
 #' \item{utteranceTimeWindow}{duration of the utterance, in seconds}
-#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceMessage}{the text of the utterance}
 #' \item{utteranceLanguage}{language code of the utterance}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' \item{aws_sentClass}{character giving the sentiment classification of this text}
 #' \item{aws_positive}{probability that this text is mixed emotion}
 #' \item{aws_negative}{probability that this text is negative}
@@ -39,17 +45,20 @@
 
 #' Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.
 #' 
-#' @format A data frame with 10 rows of 20 variables: 
+#' @format A data frame with 900 rows of 23 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
+#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 #' \item{utteranceStartTime}{timestamp for the start of the utterance}
 #' \item{utteranceEndSeconds}{when the utterance ended as the number of seconds from the start of the recording}
 #' \item{utteranceEndTime}{timestamp for the end of the utterance}
 #' \item{utteranceTimeWindow}{duration of the utterance, in seconds}
-#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{utteranceMessage}{the text of the utterance}
 #' \item{utteranceLanguage}{language code of the utterance}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' \item{wordCount}{number of words in this utterance}
 #' \item{syu_anger}{number of anger words}
 #' \item{syu_anticipation}{number of anticipation words}
@@ -67,14 +76,17 @@
 
 #' Parsed chat file in a Zoom meeting
 #' 
-#' @format A data frame with 10 rows of 6 variables: 
+#' @format A data frame with 30 rows of 9 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
+#' \item{userName}{Zoom display name attached to this speaker}
 #' \item{messageId}{an incremented numeric identifier for a marked chat message}
 #' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 #' \item{messageTime}{timestamp for message}
-#' \item{userName}{Zoom display name attached to the messager}
 #' \item{message}{text of the message}
 #' \item{messageLanguage}{language code of the message}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' }
 #' @source \url{http://apknight.org/}
 "sample_chat_processed"
@@ -82,14 +94,17 @@
 
 #' Parsed chat file in a Zoom meeting with sentiment analysis using AWS
 #' 
-#' @format A data frame with 10 rows of 6 variables: 
+#' @format A data frame with 10 rows of 14 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{messageId}{an incremented numeric identifier for a marked chat message}
+#' \item{userName}{Zoom display name attached to the messager}
 #' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 #' \item{messageTime}{timestamp for message}
-#' \item{userName}{Zoom display name attached to the messager}
 #' \item{message}{text of the message}
 #' \item{messageLanguage}{language code of the message}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' \item{aws_sentClass}{character giving the sentiment classification of this text}
 #' \item{aws_positive}{probability that this text is mixed emotion}
 #' \item{aws_negative}{probability that this text is negative}
@@ -102,14 +117,17 @@
 
 #' Parsed chat file in a Zoom meeting with sentiment analysis using syuzhet
 #' 
-#' @format A data frame with 10 rows of 6 variables: 
+#' @format A data frame with 30 rows of 30 variables: 
 #' \describe{
+#' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{messageId}{an incremented numeric identifier for a marked chat message}
+#' \item{userName}{Zoom display name attached to the messager}
 #' \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 #' \item{messageTime}{timestamp for message}
-#' \item{userName}{Zoom display name attached to the messager}
 #' \item{message}{text of the message}
 #' \item{messageLanguage}{language code of the message}
+#' \item{userEmail}{character email address}
+#' \item{userId}{numeric id of each speaker}
 #' \item{wordCount}{number of words in this utterance}
 #' \item{syu_anger}{number of anger words}
 #' \item{syu_anticipation}{number of anticipation words}

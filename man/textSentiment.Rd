@@ -4,12 +4,12 @@
 \alias{textSentiment}
 \title{Conduct a sentiment analysis on text data}
 \usage{
-textSentiment(inputData, idVar, textVar, sentMethods, languageCodeVar)
+textSentiment(inputData, idVars, textVar, sentMethods, languageCodeVar)
 }
 \arguments{
 \item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
 
-\item{idVar}{name of variable that gives the unique identifier for this piece of text}
+\item{idVars}{vector with the name of variables that give the unique identifiers for this piece of text}
 
 \item{textVar}{name of variable that contains the text}
 
@@ -20,8 +20,8 @@ either "aws" or "syuzhet"}
 }
 \value{
 returns a list containing as data.frames the output of the sentiment analyses
-that were requested in sentMethods. For each output data.frame, the first column
-is the idVar specified to enable combining back with the original inputData
+that were requested in sentMethods. For each output data.frame, the first columns
+are the idVars specified to enable combining back with the original inputData
 }
 \description{
 This function takes in the output of the chat and transcript functions. It then
@@ -32,6 +32,6 @@ However you authenticate for AWS, you should do so before running calling the fu
 with this option in sentMethods
 }
 \examples{
-sent.out = textSentiment(inputData=sample_transcript_processed, idVar='utteranceId', 
+sent.out = textSentiment(inputData=sample_transcript_processed, idVar=c('utteranceId'), 
 textVar='utteranceMessage', sentMethods='syuzhet', languageCodeVar='utteranceLanguage')
 }

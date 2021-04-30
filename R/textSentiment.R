@@ -8,21 +8,22 @@
 #' with this option in sentMethods
 #'
 #' @param inputData data.frame that has been output by either the processZoomTranscript or processZoomChat functions 
-#' @param idVar name of variable that gives the unique identifier for this piece of text
+#' @param idVars vector with the name of variables that give the unique identifiers for this piece of text
 #' @param textVar name of variable that contains the text
 #' @param sentMethods a vector specifying the types of sentiment analysis-currently
 #' either "aws" or "syuzhet"
 #' @param languageCodeVar name of variable that contains the language code
 #'
 #' @return returns a list containing as data.frames the output of the sentiment analyses
-#' that were requested in sentMethods. For each output data.frame, the first column
-#' is the idVar specified to enable combining back with the original inputData
+#' that were requested in sentMethods. For each output data.frame, the first columns
+#' are the idVars specified to enable combining back with the original inputData
 #' @export
 #'
 #' @examples
-#' sent.out = textSentiment(inputData=sample_transcript_processed, idVar='utteranceId', 
+#' sent.out = textSentiment(inputData=sample_transcript_processed, idVar=c('utteranceId'), 
 #' textVar='utteranceMessage', sentMethods='syuzhet', languageCodeVar='utteranceLanguage')
-textSentiment = function(inputData, idVar, textVar, sentMethods, languageCodeVar){
+
+textSentiment = function(inputData, idVars, textVar, sentMethods, languageCodeVar){
   aws_sentClass <- NULL  
   returnList = list()
   if("aws" %in% sentMethods) {		
@@ -36,8 +37,8 @@ textSentiment = function(inputData, idVar, textVar, sentMethods, languageCodeVar
       aws_mixed = x$SentimentScore$Mixed
       return(data.frame(aws_sentClass, aws_positive, aws_negative, aws_neutral, aws_mixed))
     })) 
-    awsOutput = cbind(inputData[,c(idVar)], aws.o.data)
-    names(awsOutput)[1] = idVar
+    awsOutput = cbind(inputData[,c(idVars)], aws.o.data)
+    names(awsOutput)[1:length(idVars)] = idVars
     returnList[["aws"]] = awsOutput
   }
   
@@ -47,8 +48,8 @@ textSentiment = function(inputData, idVar, textVar, sentMethods, languageCodeVar
     syuzhetData$wordCount = stringr::str_count(syuzhetData[,textVar], '\\w+')
     syu.o.data = do.call(rbind, lapply(syuzhetData[,textVar], syuzhet::get_nrc_sentiment))		
     names(syu.o.data) = paste("syu", names(syu.o.data), sep="_")    
-    syuOutput = cbind(syuzhetData[,c(idVar, "wordCount")], syu.o.data)
-    names(syuOutput)[1] = idVar
+    syuOutput = cbind(syuzhetData[,c(idVars, "wordCount")], syu.o.data)
+    names(syuOutput)[1:length(idVars)] = idVars
     returnList[["syuzhet"]] = syuOutput
   }	
   return(returnList)

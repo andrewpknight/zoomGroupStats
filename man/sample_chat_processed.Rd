@@ -5,14 +5,17 @@
 \alias{sample_chat_processed}
 \title{Parsed chat file in a Zoom meeting}
 \format{
-A data frame with 10 rows of 6 variables:
+A data frame with 30 rows of 9 variables:
 \describe{
+\item{batchMeetingId}{a character meeting identification variable}
+\item{userName}{Zoom display name attached to this speaker}
 \item{messageId}{an incremented numeric identifier for a marked chat message}
 \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 \item{messageTime}{timestamp for message}
-\item{userName}{Zoom display name attached to the messager}
 \item{message}{text of the message}
 \item{messageLanguage}{language code of the message}
+\item{userEmail}{character email address}
+\item{userId}{numeric id of each speaker}
 }
 }
 \source{

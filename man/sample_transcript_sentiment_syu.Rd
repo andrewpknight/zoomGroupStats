@@ -5,17 +5,20 @@
 \alias{sample_transcript_sentiment_syu}
 \title{Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.}
 \format{
-A data frame with 10 rows of 20 variables:
+A data frame with 900 rows of 23 variables:
 \describe{
+\item{batchMeetingId}{a character meeting identification variable}
 \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
+\item{userName}{Zoom display name attached to this speaker}
 \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 \item{utteranceStartTime}{timestamp for the start of the utterance}
 \item{utteranceEndSeconds}{when the utterance ended as the number of seconds from the start of the recording}
 \item{utteranceEndTime}{timestamp for the end of the utterance}
 \item{utteranceTimeWindow}{duration of the utterance, in seconds}
-\item{userName}{Zoom display name attached to this speaker}
 \item{utteranceMessage}{the text of the utterance}
 \item{utteranceLanguage}{language code of the utterance}
+\item{userEmail}{character email address}
+\item{userId}{numeric id of each speaker}
 \item{wordCount}{number of words in this utterance}
 \item{syu_anger}{number of anger words}
 \item{syu_anticipation}{number of anticipation words}
