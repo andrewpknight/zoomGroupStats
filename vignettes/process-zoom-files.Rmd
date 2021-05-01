@@ -202,7 +202,7 @@ batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoo
 
 ```{r, eval=FALSE}
 batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="./myEditedRosetta.xlsx", 
-#' meetingId="batchMeetingId")
+meetingId="batchMeetingId")
 ```
 
 # Analyzing Data within `transcript` and `chat`
