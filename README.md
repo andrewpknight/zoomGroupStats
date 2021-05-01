@@ -8,7 +8,7 @@ zoomGroupStats provides utilities for processing and analyzing the files that ar
 
 ## Installing & Getting Started
 
-This is a work in progress. I am still making substantive changes to the package and actively developing the documentation. The quickest way to get going with this is to install the github version of the package and follow along with the vignette that I am developing. 
+This is a work in progress. I am still making substantive changes to the package and actively developing the documentation. The quickest way to get going with this is to install the github version of the package and follow along with the [vignette](http://apknight.org/docs/articles/process-zoom-files.html) that I am developing. 
 
 ``` r
 library(devtools)
@@ -16,6 +16,8 @@ devtools::install_github("https://github.com/andrewpknight/zoomGroupStats", buil
 library(zoomGroupStats)
 vignette("process-zoom-files")
 ```
+
+As I'm building this, I'm publishing [ongoing documentation for zoomGroupStats on my website](http://apknight.org/docs/).
 
 An alternative approach to use while the package is being built is to source older versions of the functions alone directly from my website:
 
