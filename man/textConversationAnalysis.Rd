@@ -40,6 +40,7 @@ and produces a set of conversation measures.
 convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
 inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="none")
 
+\dontrun{
 convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
 inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="aws")
 
@@ -54,4 +55,5 @@ inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="
 
 convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_syu, 
 inputType='chat',meetingId='batchMeetingId',  speakerId='userName', sentMethod="syuzhet")
+}
 }

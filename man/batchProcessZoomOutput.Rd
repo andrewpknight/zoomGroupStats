@@ -4,11 +4,14 @@
 \alias{batchProcessZoomOutput}
 \title{Batch process files that have been downloaded from Zoom}
 \usage{
-batchProcessZoomOutput(batchInput)
+batchProcessZoomOutput(batchInput, exportZoomRosetta = NULL)
 }
 \arguments{
 \item{batchInput}{String giving the location of the xlsx file
 that contains the information for the zoom meetings}
+
+\item{exportZoomRosetta}{string giving the path for exporting the
+zoomRosetta file to link up unique individual IDs manually}
 }
 \value{
 a list that has a list item for each of the elements

@@ -4,7 +4,14 @@
 \alias{textSentiment}
 \title{Conduct a sentiment analysis on text data}
 \usage{
-textSentiment(inputData, idVars, textVar, sentMethods, languageCodeVar)
+textSentiment(
+  inputData,
+  idVars,
+  textVar,
+  sentMethods,
+  appendOut = FALSE,
+  languageCodeVar
+)
 }
 \arguments{
 \item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
@@ -15,6 +22,9 @@ textSentiment(inputData, idVars, textVar, sentMethods, languageCodeVar)
 
 \item{sentMethods}{a vector specifying the types of sentiment analysis-currently
 either "aws" or "syuzhet"}
+
+\item{appendOut}{boolean indicating whether you want the sentiment results
+merged to the inputData in your output}
 
 \item{languageCodeVar}{name of variable that contains the language code}
 }
@@ -33,5 +43,6 @@ with this option in sentMethods
 }
 \examples{
 sent.out = textSentiment(inputData=sample_transcript_processed, idVar=c('utteranceId'), 
-textVar='utteranceMessage', sentMethods='syuzhet', languageCodeVar='utteranceLanguage')
+textVar='utteranceMessage', sentMethods='syuzhet', 
+appendOut=FALSE, languageCodeVar='utteranceLanguage')
 }

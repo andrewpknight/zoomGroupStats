@@ -1,0 +1,252 @@
+---
+title: "Turning Zoom Sessions into Datasets"
+author: "Andrew P. Knight"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Turning Zoom Sessions into Datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Before Recording Meetings
+This package is currently built to process Zoom sessions that have been recorded using the [Zoom Cloud recording](https://support.zoom.us/hc/en-us/articles/203741855) features. To give yourself the best downstream outcomes, take time upfront--before running any meetings at all--to configure your Zoom subscription. In particular, consider the following recommendations: 
+
+## Maximize degrees of freedom
+When configuring your Zoom subscription and preparing to record virtual meetings, I recommend providing yourself the most flexibility upfront. You can always subset and focus on some elements downstream. But, if you don't capture something upfront, you'll lose those options downstream. In particular: 
+
+1. If using cloud-based recording, select all possible recording options (of different views). This gives you the ability to make selective decisions after you've run the meeting.
+1. Select options that enhance the recording for 3rd part video editing. 
+1. Make sure to select the option to have Zoom produce an audio transcript.
+1. Make other option selection in a manner consistent with your research goals (e.g., having names on videos, having video time stamped).
+
+## Develop a standardized protocol 
+Before launching data collection, create and produce documentation of a standard process for yourself and any collaborators to follow. A standardized protocol will ensure consistency in your raw Zoom output across multiple meetings. As examples, consider: 
+
+1. [Sample of a guide given to those charged with recording meetings](https://docs.google.com/presentation/d/1B9Cdc-tdB4mKYjIXQ7R-RgF5-HEazU_Daiik_1GH8WY/edit?usp=sharing)
+1. [Sample video guide for how to set up Zoom recording features](https://youtu.be/Y82nf9lfeQU)
+1. [Sample video guide for recording the meeting itself](https://youtu.be/HbbKcmbaLYI)
+
+## Require users to be registered in Zoom
+A major challenge when collecting large scale data with Zoom recordings is the absence of a persistent individual identifier that is linked to the wide range of display names that people use. To give yourself the easiest path toward identified data: 
+
+1. If possible, require users to access meetings through an account registered with Zoom. 
+1. If possible, require users to access Zoom using a known registered account (e.g., one with your institution).
+1. If neither of these is possible, add guidance to your standardized protocol for meeting participants to manually change their display names to some standardized format. 
+
+# Downloading Files & Preparing a Batch
+In its most basic form, a virtual meetings dataset is structured as individual meeting participants who are nested within a given virtual meeting. To aid in creating a usable dataset from Zoom sessions, it is useful to treat separate meetings as separate entities--each of which will have several elements.
+
+## Accessing & Downloading Files from Zoom
+Depending on your research objectives, you will need different output files from Zoom. The components that are currently supported and used in this package are:
+
+1. A *participants* file. This is a .csv file that contains meta-data about your meeting. This is an essential file that should be downloaded for each meeting that you wish to process. To download it:  
+    * Log into your Zoom account through a web browser
+    * Navigate to the *Reports*
+    * Click *Usage Reports* 
+    * Scroll to the *Participants* column for your focal meeting
+    * Click the linked number of participants
+    * Check "export with meeting data" and "show unique users"
+    * Click *Export*
+1. A *transcript* file. This is a .vtt file that contains Zoom's cloud transcription of the spoken audio during the recorded meeting. 
+    * Navigate to the *Recordings* page
+    * Click the link indicating the number of items
+    * Download the Audio Transcript file
+1. A *chat* file. This is a.txt file that contains the record of public chat messages posted during the recorded meeting. Download it from the same page where you accessed the *transcript*. 
+1. An *audio* file. This is an .mp4 file that contains the recorded audio during the session. Download it from the same age as the items above.
+1. Several different *video* file options. [Zoom's Help Center describes The nature of these different formats](https://support.zoom.us/hc/en-us/articles/360025561091-Recording-layouts). For analyzing facial expressions, one of the most useful is the gallery style video. 
+
+## Creating a Structure to Batch Process
+Batch processing simply means that you are combining several meetings into a single dataset. Even if you are only analyzing a single meeting, though, it is useful to treat that single meeting as a batch of one. This will help in creating an extensible dataset that you could add to in the future. 
+
+### Rename the Files Downloaded from Zoom 
+To organize your data for a batch run, you must rename the files in a systematic way and save them in a single directory. To name the files, imagine that each file will have a "prefix" and a "suffix". The prefix will be an identifier for what meeting it came from and the suffix will be an identifier for what data source is in the file. Whereas you can use whatever prefix you choose, the suffix must be standardized as follows: 
+
+| Suffix | Description |
+|:---------------|:------------------------------------------------|
+| _chat.txt | Used for the chat file for meetings |
+| _transcript.vtt | Used for the transcript file for meetings  |
+| _participants.csv | Used for the participants file for meetings |
+| _video.mp4 | Used for a video file for meetings |
+
+Imagine a sample batch run, then, which includes all four elements for three meetings. The prefixes for the meetings could be "meeting001", "meeting002", and "meeting003". This would yield a total of 12 files, named as follows: 
+
+* meeting001_chat.txt
+* meeting001_transcript.vtt
+* meeting001_participants.csv
+* meeting001_video.mp4
+* meeting002_chat.txt
+* meeting002_transcript.vtt
+* meeting002_participants.csv
+* meeting002_video.mp4
+* meeting003_chat.txt
+* meeting003_transcript.vtt
+* meeting003_participants.csv
+* meeting003_video.mp4
+
+All 8 files should be saved in a single directory. 
+
+### Prepare a Batch Spreadsheet
+
+Next, you will prepare a spreadsheet in .xlsx format. This spreadsheet tells `zoomGroupStats` how to find your files and what information to process. Practically, this spreadsheet is also helpful for organizing your data and keeping track of what you have downloaded. 
+
+You must use the following structure and column headers for your spreadsheet:
+
+| batchMeetingId | fileRoot | participants | transcript | chat | video |
+|:---------------|:---------|:-------------|:-----------|:-----|:------|
+|   00000000001  |  /myMeetings/meeting001  |    1   |    1  | 1 | 0 |
+|   00000000002  |  /myMeetings/meeting002  |    1   |    1  | 1 | 0 |
+|   00000000003  |  /myMeetings/meeting003  |    1   |    1  | 1 | 0 |
+
+The first row in the file is the header, which should mirror the example above. Each subsequent row provides the information for a single meeting. [Here is a sample that you could use](https://github.com/andrewpknight/zoomGroupStats/blob/main/inst/extdata/myMeetingsBatch.xlsx), replacing any rows after the header with your own information.
+
+| Column Name | Description |
+|:---------------|:------------------------------------------------|
+| batchMeetingId | A string identifier for this particular meeting |
+| fileRoot | A string that gives the full path and prefix where the files from this meeting can be found. The final part of this string (e.g., meeting001 above) is how you have named the files downloaded for this meeting.  |
+| participants | Binary - 0 if you did not download the participants file, 1 if you did |
+| transcript | Binary - 0 if you did not download the transcript file, 1 if you did |
+| chat | Binary - 0 if you did not download the chat file, 1 if you did |
+| video | Binary - 0 if you did not download a video file, 1 if you did |
+
+# Turning Downloads into Data
+
+If you have followed the steps above, turning your Zoom sessions into data should be straightforward using the `zoomGroupStats` package.You should begin by installing the latest version of `zoomGroupStats`. Currently this is done through the `install_github` function from the `devtools` package: 
+
+```{r, eval=FALSE}
+devtools::install_github("https://github.com/andrewpknight/zoomGroupStats")
+```
+
+After you have installed the package, you can then load it into your environment as usual: 
+
+```{r setup}
+library(zoomGroupStats)
+```
+
+## Process your Batch
+
+The first step in turning downloads into data is to process your batch using the `batchProcessZoomOutput` function. 
+
+```{r, eval=FALSE}
+batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx")
+```
+
+```{r, echo=FALSE, results="hide"}
+batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', "myMeetingsBatch.xlsx", package = 'zoomGroupStats'))
+```
+
+`batchInput` gives the path to the batch file that you created by following the steps above. This function will iterate through the meetings listed in the `batchInput` file. For each meeting, the function will detect any of the named files described above and do an initial processing of them.
+
+The output, stored in this example in `batchOut`, will be a multi-item list that contains any data that were available according to the batch instructions. Currently, the following items can be included, if raw files are available: 
+
+### meetInfo & partInfo
+
+These two items provide meta-data about the full set of virtual meetings. These are useful files for nailing down the structure of your full dataset (in terms of individuals nested within meetings) and for creating a unique individual identifier for the people in your dataset. 
+
+`meetInfo` is a data.frame that gives information pulled about the meetings from the participants file downloaded from Zoom. Each row in this file is a meeting: 
+
+```{r}
+str(batchOut$meetInfo)
+```
+
+`partInfo` is a data.frame that gives the participants in each meeting and any information available in the participants file downloaded from Zoom
+
+```{r}
+str(batchOut$partInfo)
+```
+
+### transcript & chat
+
+These two items provide parsed text data from the transcribed audio spoken during the meeting and the text-based chat in the meeting. These files are the basis of any further text-based analysis. One important thing to note in processing transcripts is that Zoom timestamps the transcript file anchored on the start of the recording--not at the start of the session itself. The issue here is that a recording may not begin until a period of time after the launch of the session. This means that you could have a transcript file out of sync with the chat file, which begins its timestamp at the start of the session. Resolving this issue requires careful records of when the recording was started or setting up your session to automatically record. 
+
+`transcript` is a data.frame that is the parsed audio transcript file. Each row represents a single marked "utterance" using Zoom's cloud-based transcription algorithm. Utterances are marked as a function of pauses in speech and/or speaker changes. 
+
+```{r}
+str(batchOut$transcript)
+```
+
+
+`chat` is a data.frame that is the parsed text-based chat file. Each row represents a single chat message submitted by a user. Non-ASCII characters will not be correctly rendered in the message text.
+
+```{r}
+str(batchOut$chat)
+```
+
+### rosetta
+The final element is called "rosetta" because it will help you deal with one of the most vexxing challenges in analyzing virtual meetings with a large number of participants: The lack of a persistent and unique individual identifier for participants. Because the transcript and chat files rely on people's Zoom display names--and because people can change their display names--you will frequently encounter duplicate names and/or multiple identifiers for the same person. 
+
+To address this problem, the `rosetta` file compiles every unique display name (by meeting) encountered across the `participants`, `chat`, and `transcript` files. 
+
+```{r}
+str(batchOut$rosetta)
+```
+
+## Add a Unique Individual Identifier to All Elements
+
+I have found that by exporting the `rosetta` file and manually attaching a unique individual identifier (e.g., number) is a necessary process to ensure that the right data are attached to the right people. In terms of process, here is what I do: 
+
+* Export the `rosetta` file. You can do this in your initial `batchProcessZoomOutput` call as follows: 
+```{r, eval=FALSE}
+batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoomRosetta="./myMeetings_rosetta_original.xlsx")
+```
+* Manually review this file, adding a new column with your unique user identifier (e.g., `indivId`). This should be a persistent identifier for the *person*--something that is repeated across multiple meetings that someone is in. Save your file with a new name so that you don't accidentally overwrite it by re-running the command above. 
+
+* Import the reviewed and edited rosetta file. The following command will import the file and add your new identifier to each of the elements that are included in `batchOut`. Going forward, you should use the new individual identifier (e.g., `indivId`) in your analyses. Together with the meeting identifier (e.g., `batchMeetingId`), you will be able to link records to other relevant data that you have collected (e.g., survey data). 
+
+```{r, eval=FALSE}
+batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="./myEditedRosetta.xlsx", 
+#' meetingId="batchMeetingId")
+```
+
+# Analyzing Data within `transcript` and `chat`
+
+## Cleaning text-based data
+
+## Performing sentiment analysis
+
+Using `textSentiment`
+
+```{r, eval=FALSE}
+ transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
+```
+
+## Performing conversation analysis
+
+Using `textConversationAnalysis`
+
+```{r, eval=FALSE}
+ convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
+```
+
+## Performing windowed conversation analysis
+
+Using `windowedTextConversationAnalysis`
+
+```{r, eval=FALSE}
+ win.convo.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws", timeVar="utteranceStartSeconds", windowSize=600)
+```
+
+# Analyzing Video from Zoom
+
+## Parsing Zoom Video feed
+
+Using `grabVideoStills`
+
+```{r, eval=FALSE}
+grabVideoStills(inputVideo='sample_gallery_video.mp4', sampleWindow=45, stillPath="")
+```
+
+## Analyzing attributes of detected faces
+
+Using `videoFaceAnalysis`
+
+```{r, eval=FALSE}
+vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")
+```

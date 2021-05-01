@@ -5,6 +5,8 @@
 #'
 #' @param batchInput String giving the location of the xlsx file
 #' that contains the information for the zoom meetings
+#' @param exportZoomRosetta string giving the path for exporting the
+#' zoomRosetta file to link up unique individual IDs manually
 #'
 #' @return a list that has a list item for each of the elements
 #' of a Zoom output that are available--batchInfo, meetInfo, partInfo, 
@@ -15,7 +17,7 @@
 #' \dontrun{
 #' batchOut = batchProcessZoomOutput(batchInput="myMeetingsBatch.xlsx")
 #' }
-batchProcessZoomOutput = function(batchInput) {
+batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchInfo = openxlsx::read.xlsx(batchInput)
   
   ### Initialize the output frames that will be filled ###
@@ -58,6 +60,10 @@ batchProcessZoomOutput = function(batchInput) {
     if(!is.null(zoomOut$rosetta)) {
       zoomOut$rosetta$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchRosetta = rbind(batchRosetta, zoomOut$rosetta)
+      
+      if(!is.null(exportZoomRosetta)) {
+        openxlsx::write.xlsx(zoomOut$rosetta, exportZoomRosetta)      	
+      }
     }	
     
   }

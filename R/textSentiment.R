@@ -12,6 +12,8 @@
 #' @param textVar name of variable that contains the text
 #' @param sentMethods a vector specifying the types of sentiment analysis-currently
 #' either "aws" or "syuzhet"
+#' @param appendOut boolean indicating whether you want the sentiment results
+#' merged to the inputData in your output
 #' @param languageCodeVar name of variable that contains the language code
 #'
 #' @return returns a list containing as data.frames the output of the sentiment analyses
@@ -21,9 +23,10 @@
 #'
 #' @examples
 #' sent.out = textSentiment(inputData=sample_transcript_processed, idVar=c('utteranceId'), 
-#' textVar='utteranceMessage', sentMethods='syuzhet', languageCodeVar='utteranceLanguage')
+#' textVar='utteranceMessage', sentMethods='syuzhet', 
+#' appendOut=FALSE, languageCodeVar='utteranceLanguage')
 
-textSentiment = function(inputData, idVars, textVar, sentMethods, languageCodeVar){
+textSentiment = function(inputData, idVars, textVar, sentMethods, appendOut=FALSE, languageCodeVar){
   aws_sentClass <- NULL  
   returnList = list()
   if("aws" %in% sentMethods) {		
@@ -39,6 +42,11 @@ textSentiment = function(inputData, idVars, textVar, sentMethods, languageCodeVa
     })) 
     awsOutput = cbind(inputData[,c(idVars)], aws.o.data)
     names(awsOutput)[1:length(idVars)] = idVars
+    
+    if(appendOut) {
+      awsOutput = merge(inputData, awsOutput, by=idVars)
+    }
+    
     returnList[["aws"]] = awsOutput
   }
   
@@ -50,7 +58,13 @@ textSentiment = function(inputData, idVars, textVar, sentMethods, languageCodeVa
     names(syu.o.data) = paste("syu", names(syu.o.data), sep="_")    
     syuOutput = cbind(syuzhetData[,c(idVars, "wordCount")], syu.o.data)
     names(syuOutput)[1:length(idVars)] = idVars
+    
+    if(appendOut) {
+      syuOutput = merge(inputData, syuOutput, by=idVars)
+    }
+    
     returnList[["syuzhet"]] = syuOutput
   }	
   return(returnList)
 }
+
