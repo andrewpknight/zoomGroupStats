@@ -1,0 +1,45 @@
+---
+title: "Part 3: Analyzing Conversations in Zoom"
+author: "Andrew P. Knight"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Part 3: Analyzing Conversations in Zoom}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Analyzing Data within `transcript` and `chat`
+
+## Cleaning text-based data
+
+## Performing sentiment analysis
+
+Using `textSentiment`
+
+```{r, eval=FALSE}
+ transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
+```
+
+## Performing conversation analysis
+
+Using `textConversationAnalysis`
+
+```{r, eval=FALSE}
+ convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
+```
+
+## Performing windowed conversation analysis
+
+Using `windowedTextConversationAnalysis`
+
+```{r, eval=FALSE}
+ win.convo.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws", timeVar="utteranceStartSeconds", windowSize=600)
+```

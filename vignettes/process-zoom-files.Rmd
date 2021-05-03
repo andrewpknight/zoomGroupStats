@@ -1,10 +1,10 @@
 ---
-title: "Turning Zoom Sessions into Datasets"
+title: "Part 2: Turning Zoom Downloads into Datasets"
 author: "Andrew P. Knight"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Turning Zoom Sessions into Datasets}
+  %\VignetteIndexEntry{Part 2: Turning Zoom Downloads into Datasets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,35 +16,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Before Recording Meetings
-This package is currently built to process Zoom sessions that have been recorded using the [Zoom Cloud recording](https://support.zoom.us/hc/en-us/articles/203741855) features. To give yourself the best downstream outcomes, take time upfront--before running any meetings at all--to configure your Zoom subscription. In particular, consider the following recommendations: 
+In the second part of this guide, you will learn how to turn downloadable files from Zoom recordings into datasets that you can analyze in `R` using `zoomGroupStats`. Again, because `zoomGroupStats` relies on [Zoom Cloud recording](https://support.zoom.us/hc/en-us/articles/203741855) features, this guide will focus specifically on the files that you download from the Zoom Cloud. However, the functions in `zoomGroupStats` can also be used on meetings that you record locally. 
 
-## Maximize degrees of freedom
-When configuring your Zoom subscription and preparing to record virtual meetings, I recommend providing yourself the most flexibility upfront. You can always subset and focus on some elements downstream. But, if you don't capture something upfront, you'll lose those options downstream. In particular: 
+This guide will progress from instructions on which files to download from Zoom to how to convert those files into useable datasets. In its most basic form, a research dataset using virtual meetings can be structured as individual meeting participants who are nested within virtual meetings. Individual participants can attend multiple virtual meetings; indeed, individual participants *could* attend multiple virtual meetings at the same time. Individuals can further be members of multiple other organizational units (e.g., groups, teams, departments, organizations). To build a basic, clean dataset, though, what you must know is which individual human being was logged into which virtual meeting.  
 
-1. If using cloud-based recording, select all possible recording options (of different views). This gives you the ability to make selective decisions after you've run the meeting.
-1. Select options that enhance the recording for 3rd part video editing. 
-1. Make sure to select the option to have Zoom produce an audio transcript.
-1. Make other option selection in a manner consistent with your research goals (e.g., having names on videos, having video time stamped).
+## How to Download Files from Zoom
 
-## Develop a standardized protocol 
-Before launching data collection, create and produce documentation of a standard process for yourself and any collaborators to follow. A standardized protocol will ensure consistency in your raw Zoom output across multiple meetings. As examples, consider: 
-
-1. [Sample of a guide given to those charged with recording meetings](https://docs.google.com/presentation/d/1B9Cdc-tdB4mKYjIXQ7R-RgF5-HEazU_Daiik_1GH8WY/edit?usp=sharing)
-1. [Sample video guide for how to set up Zoom recording features](https://youtu.be/Y82nf9lfeQU)
-1. [Sample video guide for recording the meeting itself](https://youtu.be/HbbKcmbaLYI)
-
-## Require users to be registered in Zoom
-A major challenge when collecting large scale data with Zoom recordings is the absence of a persistent individual identifier that is linked to the wide range of display names that people use. To give yourself the easiest path toward identified data: 
-
-1. If possible, require users to access meetings through an account registered with Zoom. 
-1. If possible, require users to access Zoom using a known registered account (e.g., one with your institution).
-1. If neither of these is possible, add guidance to your standardized protocol for meeting participants to manually change their display names to some standardized format. 
-
-# Downloading Files & Preparing a Batch
-In its most basic form, a virtual meetings dataset is structured as individual meeting participants who are nested within a given virtual meeting. To aid in creating a usable dataset from Zoom sessions, it is useful to treat separate meetings as separate entities--each of which will have several elements.
-
-## Accessing & Downloading Files from Zoom
 Depending on your research objectives, you will need different output files from Zoom. The components that are currently supported and used in this package are:
 
 1. A *participants* file. This is a .csv file that contains meta-data about your meeting. This is an essential file that should be downloaded for each meeting that you wish to process. To download it:  
@@ -63,10 +40,10 @@ Depending on your research objectives, you will need different output files from
 1. An *audio* file. This is an .mp4 file that contains the recorded audio during the session. Download it from the same age as the items above.
 1. Several different *video* file options. [Zoom's Help Center describes The nature of these different formats](https://support.zoom.us/hc/en-us/articles/360025561091-Recording-layouts). For analyzing facial expressions, one of the most useful is the gallery style video. 
 
-## Creating a Structure to Batch Process
-Batch processing simply means that you are combining several meetings into a single dataset. Even if you are only analyzing a single meeting, though, it is useful to treat that single meeting as a batch of one. This will help in creating an extensible dataset that you could add to in the future. 
+## Naming the Downloaded Files from Zoom 
 
-### Rename the Files Downloaded from Zoom 
+`zoomGroupStats` is designed to batch proces virtual meetings. Batch processing simply means that you are combining several meetings into a single dataset. Even if you are only analyzing a single meeting, though, it is useful to treat that single meeting as a batch of one. This will help in creating an extensible dataset that you could add to in the future. 
+
 To organize your data for a batch run, you must rename the files in a systematic way and save them in a single directory. To name the files, imagine that each file will have a "prefix" and a "suffix". The prefix will be an identifier for what meeting it came from and the suffix will be an identifier for what data source is in the file. Whereas you can use whatever prefix you choose, the suffix must be standardized as follows: 
 
 | Suffix | Description |
@@ -93,7 +70,7 @@ Imagine a sample batch run, then, which includes all four elements for three mee
 
 All 8 files should be saved in a single directory. 
 
-### Prepare a Batch Spreadsheet
+## Prepare a Batch Spreadsheet
 
 Next, you will prepare a spreadsheet in .xlsx format. This spreadsheet tells `zoomGroupStats` how to find your files and what information to process. Practically, this spreadsheet is also helpful for organizing your data and keeping track of what you have downloaded. 
 
@@ -116,7 +93,7 @@ The first row in the file is the header, which should mirror the example above. 
 | chat | Binary - 0 if you did not download the chat file, 1 if you did |
 | video | Binary - 0 if you did not download a video file, 1 if you did |
 
-# Turning Downloads into Data
+## Process your Batch
 
 If you have followed the steps above, turning your Zoom sessions into data should be straightforward using the `zoomGroupStats` package.You should begin by installing the latest version of `zoomGroupStats`. Currently this is done through the `install_github` function from the `devtools` package: 
 
@@ -129,8 +106,6 @@ After you have installed the package, you can then load it into your environment
 ```{r setup}
 library(zoomGroupStats)
 ```
-
-## Process your Batch
 
 The first step in turning downloads into data is to process your batch using the `batchProcessZoomOutput` function. 
 
@@ -181,6 +156,8 @@ str(batchOut$chat)
 
 ### rosetta
 The final element is called "rosetta" because it will help you deal with one of the most vexxing challenges in analyzing virtual meetings with a large number of participants: The lack of a persistent and unique individual identifier for participants. Because the transcript and chat files rely on people's Zoom display names--and because people can change their display names--you will frequently encounter duplicate names and/or multiple identifiers for the same person. 
+
+From a data structure perspective, what is most important to know is which individual person logged into which virtual meeting. Unfortunately, complications in how Zoom identifies individuals require careful human attention to this issue. To illustrate, consider the following exaggerated example. Arun Jah is an attendee in Meeting A. Arun logs in on his laptop through his corporate account. But, he also logs in on his iPad through his family account to the same meeting. After a few minutes, Arun realizes that his iPad account has his child's name displayed (the child was using it for virtual school). So, he changes his display name. Halfway through the meeting, Arun needs to get in his car to go pick up his child. So, he logs into the meeting on his smartphone. In a raw Zoom dataset, the person "Arun" will show up as four different names--(1) his corporate name that was not changed; (2) his child's name on his iPad; (3) the name he changed his iPad to; and, (4) his mobile phone. Clearly, to properly study human behavior, all of the actions associated with these four names should be attached to "Arun". 
 
 To address this problem, the `rosetta` file compiles every unique display name (by meeting) encountered across the `participants`, `chat`, and `transcript` files. 
 

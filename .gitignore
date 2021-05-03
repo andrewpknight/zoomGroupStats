@@ -5,3 +5,5 @@
 inst/doc
 docs
 _pkgdown.yml
+/doc/
+/Meta/

@@ -8,7 +8,9 @@ zoomGroupStats provides utilities for processing and analyzing the files that ar
 
 ## Installing & Getting Started
 
-This is a work in progress. I am still making substantive changes to the package and actively developing the documentation. The quickest way to get going with this is to install the github version of the package and follow along with the [vignette](http://zoomgroupstats.org/articles/process-zoom-files.html) that I am developing. 
+This is a work in progress. I am still making substantive changes to the package and actively developing the documentation. The quickest way to get going with this is to install the github version of the package. As I'm building this, I'm publishing [ongoing documentation for zoomGroupStats on my website](http://www.zoomgroupstats.org). There is a multi-part, in-progress vignette that will provide a guide for collecting research data using Zoom and analyzing it with `zoomGroupStats`. 
+
+[vignette](http://zoomgroupstats.org/articles/process-zoom-files.html) that I am developing. 
 
 ``` r
 library(devtools)
@@ -16,8 +18,6 @@ devtools::install_github("https://github.com/andrewpknight/zoomGroupStats", buil
 library(zoomGroupStats)
 vignette("process-zoom-files")
 ```
-
-As I'm building this, I'm publishing [ongoing documentation for zoomGroupStats on my website](http://zoomgroupstats.org).
 
 An alternative approach to use while the package is being built is to source older versions of the functions alone directly from my website:
 

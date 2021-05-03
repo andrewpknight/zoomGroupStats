@@ -1,0 +1,31 @@
+---
+title: "Part 4: Analyzing Video Data from Zoom"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Part 4: Analyzing Video Data from Zoom}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Parsing Zoom Video feed
+
+Using `grabVideoStills`
+
+```{r, eval=FALSE}
+grabVideoStills(inputVideo='sample_gallery_video.mp4', sampleWindow=45, stillPath="")
+```
+
+## Analyzing attributes of detected faces
+
+Using `videoFaceAnalysis`
+
+```{r, eval=FALSE}
+vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")
+```

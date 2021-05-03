@@ -1,0 +1,47 @@
+---
+title: "Part 1: Configuring Zoom to Capture Useful Data"
+author: "Andrew P. Knight"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Part 1: Configuring Zoom to Capture Useful Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The first part of this guide will provide guidance on how practices and processes to use when you are collecting data through Zoom to be used in research. Like any aspect of research, careful and thoughtful upfront planning pays dividends when using Zoom. Because `zoomGroupStats` relies on [Zoom Cloud recording](https://support.zoom.us/hc/en-us/articles/203741855) features, this guide will focus specifically on practices to use when recording your data to the cloud. However, even if you are recording virtual meetings locally, the same basic principles will likely apply. 
+
+This guide will not provide step-by-step instructions for how to operate Zoom. For detailed guidance on using Zoom, you should consult the [Zoom Help Center](https://support.zoom.us/hc/en-us).  
+
+Hopefully you are reading this guide *before* you have started collecting data. It is before collecting data that you have the best chance to minimize undesirable variation and maximize your options for using the data that you collect. Collecting data through virtual meetings is complicated and requires a thoughtful process. To give yourself the best downstream outcomes, take time upfront--before running any meetings at all--to configure your Zoom subscription. In particular, consider the following recommendations: 
+
+## Develop a standardized protocol 
+Before launching data collection, create and produce documentation of a standard process for yourself and any collaborators to follow. A standardized protocol will ensure consistency in your raw Zoom output across multiple meetings. As examples, consider: 
+
+1. [Sample of a guide given to those charged with recording meetings](https://docs.google.com/presentation/d/1B9Cdc-tdB4mKYjIXQ7R-RgF5-HEazU_Daiik_1GH8WY/edit?usp=sharing)
+1. [Sample video guide for how to set up Zoom recording features](https://youtu.be/Y82nf9lfeQU)
+1. [Sample video guide for recording the meeting itself](https://youtu.be/HbbKcmbaLYI)
+
+## Maximize degrees of freedom
+When configuring your Zoom subscription and preparing to record virtual meetings, I recommend providing yourself the most flexibility upfront. You can always subset and focus on some elements downstream. But, if you don't capture something upfront, you'll lose those options downstream. In particular: 
+
+1. If using cloud-based recording, select all possible recording options (of different views). This gives you the ability to make selective decisions after you've run the meeting.
+1. Select options that enhance the recording for 3rd part video editing. 
+1. Make sure to select the option to have Zoom produce an audio transcript.
+1. Make other option selection in a manner consistent with your research goals (e.g., having names on videos, having video time stamped).
+
+## Require users to be registered in Zoom
+A major challenge when collecting large scale data with Zoom recordings is the absence of a persistent individual identifier that is linked to the wide range of display names that people use. From a data structure perspective, what is most important to know is which individual person logged into which virtual meeting. Unfortunately, complications in how Zoom identifies individuals require careful human attention to this issue. To illustrate, consider the following exaggerated example. Arun Jah is an attendee in Meeting A. Arun logs in on his laptop through his corporate account. But, he also logs in on his iPad through his family account to the same meeting. After a few minutes, Arun realizes that his iPad account has his child's name displayed (the child was using it for virtual school). So, he changes his display name. Halfway through the meeting, Arun needs to get in his car to go pick up his child. So, he logs into the meeting on his smartphone. In a raw Zoom dataset, the person "Arun" will show up as four different names--(1) his corporate name that was not changed; (2) his child's name on his iPad; (3) the name he changed his iPad to; and, (4) his mobile phone. Clearly, to properly study human behavior, all of the actions associated with these four names should be attached to "Arun". 
+
+To give yourself the easiest path toward identified data: 
+
+1. If possible, require users to access meetings through an account registered with Zoom. 
+1. If possible, require users to access Zoom using a known registered account (e.g., one with your institution).
+1. If neither of these is possible, add guidance to your standardized protocol for meeting participants to manually change their display names to some standardized format. 
