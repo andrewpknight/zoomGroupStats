@@ -8,7 +8,8 @@ videoFaceAnalysis(
   inputVideo,
   recordingStartDateTime,
   sampleWindow,
-  facesCollectionID = NA
+  facesCollectionID = NA,
+  videoImageDirectory = NULL
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ videoFaceAnalysis(
 \item{sampleWindow}{Frame rate for the analysis}
 
 \item{facesCollectionID}{name of an AWS collection with identified faces}
+
+\item{videoImageDirectory}{path to a directory containing pre-split images. This will skip the splitting of an image file, but it presumes that images were pre-split using grabVideoStills}
 }
 \value{
 data.frame with one record for every face detected in each frame

@@ -5,7 +5,7 @@
 \alias{sample_transcript_processed}
 \title{Parsed spoken language in a Zoom meeting.}
 \format{
-A data frame with 900 rows of 12 variables:
+A data frame with 30 rows of 12 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
 \item{userName}{Zoom display name attached to this speaker}

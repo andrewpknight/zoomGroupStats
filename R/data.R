@@ -1,6 +1,6 @@
 #' Parsed spoken language in a Zoom meeting.
 #' 
-#' @format A data frame with 900 rows of 12 variables: 
+#' @format A data frame with 30 rows of 12 variables: 
 #' \describe{
 #' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{userName}{Zoom display name attached to this speaker}
@@ -20,7 +20,7 @@
 
 #' Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.
 #' 
-#' @format A data frame with 900 rows of 17 variables: 
+#' @format A data frame with 30 rows of 17 variables: 
 #' \describe{
 #' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
@@ -45,7 +45,7 @@
 
 #' Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.
 #' 
-#' @format A data frame with 900 rows of 23 variables: 
+#' @format A data frame with 30 rows of 23 variables: 
 #' \describe{
 #' \item{batchMeetingId}{a character meeting identification variable}
 #' \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}

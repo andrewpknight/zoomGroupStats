@@ -5,7 +5,7 @@
 \alias{sample_transcript_sentiment_aws}
 \title{Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.}
 \format{
-A data frame with 900 rows of 17 variables:
+A data frame with 30 rows of 17 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
 \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}

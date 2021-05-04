@@ -4,6 +4,7 @@
 #' @param recordingStartDateTime YYYY-MM-DD HH:MM:SS of the start of the recording
 #' @param sampleWindow Frame rate for the analysis
 #' @param facesCollectionID name of an AWS collection with identified faces
+#' @param videoImageDirectory path to a directory containing pre-split images. This will skip the splitting of an image file, but it presumes that images were pre-split using grabVideoStills
 #'
 #' @return data.frame with one record for every face detected in each frame
 #' for each face, there is an abundance of information from AWS rekognition
@@ -15,48 +16,40 @@
 #' recordingStartDateTime="2020-04-20 13:30:00", 
 #' sampleWindow=30, facesCollectionID="group-r")
 #' }
-videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA) {
+videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA, videoImageDirectory=NULL) {
 
-  # Need to add options so that peopel can do this on a directory of images
-  # Also give options to do it with image magick
-  
-  
   svc = paws::rekognition()
   
   recordingStartDateTime = as.POSIXct(recordingStartDateTime)
-  
-  # Should add an option to the function to tell it to create the stills or that
-  # The stills are already created (and the directory). This would give an option to use
-  # the function for non-ffmpeg users. For now, leaving as is. 
-  
-  ## Create stills from the video => Save in a temp directory
-  baseName = strsplit(basename(inputVideo), ".", fixed=T)[[1]][[1]]
-  imgTempDir = 	paste(dirname(inputVideo),"/videoFaceAnalysis_temp_", baseName, sep="")
-  dir.create(imgTempDir)
-  grabVideoStills(inputVideo, sampleWindow, imgTempDir)
-  
+
+  if(is.null(videoImageDirectory)) {
+    grabVidOut = grabVideoStills(inputVideo=inputVideo, sampleWindow=sampleWindow, tryffmpeg=TRUE)
+    videoImageDirectory = tools::file_path_sans_ext(inputVideo)
+  } 
+
   # Get any images associated with this video
-  imgFiles = list.files(path=imgTempDir, full.names=T)
+  imgFiles = list.files(path=videoImageDirectory, full.names=T)
   
   # These are empty lists to use to safe the information
   df.o = list()
   inf = list()
   
   # Now loop through the images that are part of this video (which were already extracted)
-  
+  message("Analyzing faces in sampled frames. For lots of images and lots of faces, this can be time intensive.")
+  pb = utils::txtProgressBar(min=1, max=length(imgFiles), style=3)
   for(i in 1:length(imgFiles)) {
-    
+    utils::setTxtProgressBar(pb, i)
     # Pull the image and its information
     img = magick::image_read(imgFiles[i])
     inf[[i]] = magick::image_info(img)
     
-    # This is stupid, but I've found it is necessary to adjust the timestamping, which isn't right on target
-    # from the splitting of videos
-    if(i >= 3) {
-      imgTimestamp = 17 + (i-3)*20
+    # This is stupid, but we have to adjust the timestamping of the images. The first one is 0 + sampleWindow/2, then the rest are sampleWindow incremented
+    if(i == 1) {
+      imgTimestamp = sampleWindow/2
     } else {
-      imgTimestamp = 0
-    }		
+      imgTimestamp = sampleWindow/2 + (i-1)*sampleWindow
+
+    }
     
     # Detect faces in this frame
     df.o[[i]] = svc$detect_faces(Image=list(Bytes=imgFiles[i]), Attributes="ALL")
@@ -152,13 +145,16 @@ videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, f
     }			
     # Close the image loop
   }		
+  close(pb)
   
   res.out = data.frame(raw.out, stringsAsFactors=F)
   col.numeric = c(2:4, 13:21, 23)
   col.boolean = c(5:7,9:12)
-  col.names = c("frameId", "faceId", "ageLow", "ageHigh", "smile", "eyeglasses", "sunglasses", "gender", "beard", "mustache", "eyesopen", "mouthopen", "confused", "calm", "happy", "disgusted", "angry", "fear", "sad", "surprised", "imgTimestamp", "identifiedPerson", "identifiedConfidence")
+  col.names = c("frameId", "faceId", "ageLow", "ageHigh", "smile", "eyeglasses", "sunglasses", "gender", "beard", "mustache", "eyesopen", "mouthopen", "confused", "calm", "happy", "disgusted", "angry", "fear", "sad", "surprised", "imgSeconds", "identifiedPerson", "identifiedConfidence")
   res.out[,col.numeric] = lapply(res.out[,col.numeric], as.numeric)
   res.out[,col.boolean] = lapply(res.out[,col.boolean], as.logical)
   names(res.out) = col.names	
-  res.out = res.out[, c(1,21,22,23, 2:20)]	
+  res.out$imgTimestamp = recordingStartDateTime + res.out$imgSeconds
+  res.out = res.out[, c(1,21,22,23, 24, 2:20)]	
+  return(res.out)
 }

@@ -7,17 +7,18 @@ This function currently relies on a local install of ffmpeg to
 split a video file into images. The images are saved locally
 in a directory that can be specified by the user or the function.}
 \usage{
-grabVideoStills(inputVideo, sampleWindow, stillPath)
+grabVideoStills(inputVideo, sampleWindow, tryffmpeg = TRUE)
 }
 \arguments{
-\item{inputVideo}{filepath to a video file}
+\item{inputVideo}{full filepath to a video file}
 
-\item{sampleWindow}{framerate for the pull of images}
+\item{sampleWindow}{framerate in seconds for the pull of images}
 
-\item{stillPath}{path to where the images should be saved}
+\item{tryffmpeg}{boolean indicating whether you want it to try to use ffmpeg, which tends to be much faster than magick for splitting frames}
 }
 \value{
-does not return anything. just saves the images to a local directory
+a vector containing the names of
+the images that were saved
 }
 \description{
 Helper function to split a video into still frames
@@ -27,8 +28,7 @@ in a directory that can be specified by the user or the function.
 }
 \examples{
 \dontrun{
-grabVideoStills(
-inputVideo=system.file('extdata', 'sample_gallery_video.mp4', package = 'zoomGroupStats'), 
-sampleWindow=45, stillPath="")
+grabVideoStills(inputVideo='myMeeting.mp4', 
+sampleWindow=45)
 }
 }
