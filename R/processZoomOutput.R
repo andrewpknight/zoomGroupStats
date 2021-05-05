@@ -17,8 +17,9 @@
 #' zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting", rosetta=TRUE)
 #' }
 processZoomOutput = function(fileRoot, rosetta=TRUE, sessionStartDateTime="1970-01-01 00:00:00", recordingStartDateTime="1970-01-01 00:00:00", languageCode="en") {
-  
+
   out.list = list()
+  
   participantsFile = paste(fileRoot, "_participants.csv", sep="")
   chatFile = paste(fileRoot, "_chat.txt", sep="")
   transcriptFile = paste(fileRoot, "_transcript.vtt", sep="")

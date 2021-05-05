@@ -14,9 +14,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' batchOut = batchProcessZoomOutput(batchInput="myMeetingsBatch.xlsx")
-#' }
+#' batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 
+#' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
 batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchInfo = openxlsx::read.xlsx(batchInput)
   
@@ -35,7 +34,7 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchRosetta = data.frame(userName=character(), userEmail=character(), batchMeetingId=character())	
   for(r in 1:nrow(batchInfo)) {
     
-    zoomOut = processZoomOutput(batchInfo[r, "fileRoot"])
+    zoomOut = processZoomOutput(file.path(dirname(batchInput),batchInfo[r, "fileRoot"]))
     
     if(!is.null(zoomOut$meetInfo)) {
       zoomOut$meetInfo$batchMeetingId = batchInfo[r, "batchMeetingId"]
@@ -60,13 +59,14 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
     if(!is.null(zoomOut$rosetta)) {
       zoomOut$rosetta$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchRosetta = rbind(batchRosetta, zoomOut$rosetta)
-      
+    
       if(!is.null(exportZoomRosetta)) {
         openxlsx::write.xlsx(zoomOut$rosetta, exportZoomRosetta)      	
       }
     }	
     
   }
+  
   batchOut = list("batchInfo" = batchInfo, "meetInfo" = batchMeetInfo, "partInfo" = batchPartInfo, "transcript" = batchTranscript, "chat" = batchChat, "rosetta" = batchRosetta)
   return(batchOut)
 }

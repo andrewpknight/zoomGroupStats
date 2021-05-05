@@ -23,7 +23,6 @@ Provide the location of a structured batchInput file and this
 function will process a set of meetings at once.
 }
 \examples{
-\dontrun{
-batchOut = batchProcessZoomOutput(batchInput="myMeetingsBatch.xlsx")
-}
+batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 
+'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
 }

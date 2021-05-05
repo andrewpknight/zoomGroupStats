@@ -1,72 +1,95 @@
-
 # zoomGroupStats
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-zoomGroupStats provides utilities for processing and analyzing the files that are exported from recorded Zoom meetings. This includes analyzing data captured through video cameras and microphones, the text-based chat, and meta-data. You can analyze aspects of the conversation among meeting participants, aspects of their public chatting behavior, and their facial expressions throughout the meeting. 
+The purpose of this package is to enable researchers to efficiently use the virtual meetings platform Zoom to collect data. The focal research areas that have motivated the package so far are group dynamics and interpersonal relations. With this package you will be able to:
+1. [quickly turn files downloaded from Zoom into datasets](http://zoomgroupstats.org/articles/part02-process-zoom-files.html)
+1. [analyze the dynamics of spoken and text conversations in virtual meetings](http://zoomgroupstats.org/articles/part03-analyze-zoom-conversation-data.html)
+1. [extract information from the video feeds of virtual meetings](http://zoomgroupstats.org/articles/part04-analyze-zoom-video-data.html). 
 
-## Installing & Getting Started
+For the most up-to-date information about `zoomGroupStats`, visit [http://zoomgroupstats.org](http://zoomgroupstats.org).
 
-This is a work in progress. I am still making substantive changes to the package and actively developing the documentation. The quickest way to get going with this is to install the github version of the package. As I'm building this, I'm publishing [ongoing documentation for zoomGroupStats on my website](http://www.zoomgroupstats.org). There is a multi-part, in-progress vignette that will provide a guide for collecting research data using Zoom and analyzing it with `zoomGroupStats`. 
+## Getting Started Conducting Research Using Zoom
 
-[vignette](http://zoomgroupstats.org/articles/process-zoom-files.html) that I am developing. 
+I am developing a [multi-part guide to aid in collecting research through Zoom](http://zoomgroupstats.org). In addition to detailing how to use `zoomGroupStats`, it provides advice for best practices for configuring your Zoom subscription and a process to use when collecting data across many virtual meetings. *I highly recommend reviewing [this portion of the guide](http://zoomgroupstats.org/articles/part01-configure-zoom.html) before you begin collecting data.*
 
-``` r
-library(devtools)
-devtools::install_github("https://github.com/andrewpknight/zoomGroupStats", build_vignettes=TRUE)
-library(zoomGroupStats)
-vignette("process-zoom-files")
-```
-
-An alternative approach to use while the package is being built is to source older versions of the functions alone directly from my website:
+## Installation
 
 ``` r
-source("http://apknight.org/zoomGroupStats.R")
+# Install zoomGroupStats from CRAN
+install.packages("zoomGroupStats")
+
+# Or, install the development version from GitHub:
+# install.packages("devtools")
+devtools::install_github("andrewpknight/zoomGroupStats")
 ```
 
-And, if you were using the old code that I had published initially, you can use: 
+This package is based on an initial set of functions that I created in April of 2020. If you were using those functions and would like to continue doing so, you can access them using: 
 
-```r
+``` r
 source("http://apknight.org/zoomGroupStats_deprecated.R")
 ```
 
+Note, however, that these functions will not be updated nor will they align with the documentation and vignettes that accompany the package version. 
+
 ## Examples
 
-The vignette referenced above provides far more detail about how to use this package, but here are some sample bits of code: 
+The [multi-part guide](http://zoomgroupstats.org) provides extensive detail about how to use this package. Here are some sample actions that you might take with this package to analyze your Zoom data. 
+
 
 ### Process information for a batch of meetings
 
-```r
+Using a template and set of named Zoom files, you can input and parse information for a batch of Zoom meetings using a single function. This example would further output a *rosetta* file that can be helpful for resolving Zoom display name issues. [Instructions for using the template and naming your Zoom files can be found in this vignette](http://zoomgroupstats.org/articles/part02-process-zoom-files.html). 
+
+``` r
 batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoomRosetta="./myMeetings_rosetta_original.xlsx")
 ```
 
-### Add a unique individual identifier
+### Add a unique individual identifier that you have manually adjusted
 
-```r
+After you have aligned a unique individual identifier with the Zoom display names provided in the *rosetta* file, you can add this unique identifier to all of the Zoom datasets that you initially created (e.g., transcript, chat, participant info, meeting info). 
+
+``` r
 batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="./myEditedRosetta.xlsx", 
 meetingId="batchMeetingId")
 ```
 
-### Conduct sentiment analysis on transcribed audio data
+### Conduct sentiment analysis
+
+Measure the sentiment of the different text-based datasets that are in your Zoom output (e.g., chat, transcript). You can request two types of sentiment analysis--a lexicon-based analysis using the open source `syuzhet` package or a machine learning-based analysis using Amazon Web Services. To request the latter, [you must have appropriately configured your AWS credentials](https://github.com/paws-r/paws/blob/main/docs/credentials.md). 
 
 ``` r 
- transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='utteranceLanguage')
+# Request sentiment analysis of transcribed audio 
+transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='utteranceLanguage')
+ 
+# Request sentiment analysis of text-based chat
+transcriptSent = textSentiment(inputData=batchOutIds$chat, idVar=c('messageId'), textVar='message', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='messageLanguage')
 ```
 
-### Conduct sentiment analysis on chat data
+### Conduct conversation analysis
+
+Measure attributes of the conversation flow--either based on the transcribed audio or the text-based chat. You will receive measurements (e.g., speaking time, number of chat messages) at the level of the individual meeting participant and the meeting as a whole. If you have conducted a sentiment analysis, you can further request analysis of sentiment metrics. 
 
 ``` r 
- transcriptSent = textSentiment(inputData=batchOutIds$chat, idVar=c('messageId'), textVar='message', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='messageLanguage')
-```
-
-### Conduct conversation analysis on transcribed audio data
-
-``` r 
+# Request conversation analysis of transcribed audio with aws sentiment analysis completed already
 convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
+  
+# Request conversation analysis of text-based chat without sentiment analysis
+convo.out = textConversationAnalysis(inputData=batchOutIds$chat, inputType='chat', meetingId='batchMeetingId', speakerId='indivId')
 ```
 
-### Analyze the facial expressions in the video feed
+### Conduct a windowed conversation analysis
+
+In addition to measuring attributes of the conversation across an entire virtual meeting, you can analyze conversations in temporal *windows*, or subsets of the overall meeting. By using the following function, you can break the virtual meeting into segments and output conversation metrics within each segment.
+
+``` r
+win.text.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, inputType="transcript", meetingId="batchMeetingId", speakerId="indivId", sentMethod="aws", timeVar="utteranceStartSeconds", windowSize=600)
+```
+
+### Analyze facial expressions in the video feed
+
+Measure characteristics of the video feeds in a downloaded Zoom video file. This function currently focused just on facial expressions. It requires either `magick` or `ffmpeg` to process the video file. And, it requires appropriately configured AWS credentials to analyze faces in the video. With these prerequisites, you can detect known individuals in a video and extract facial characteristics (e.g., emotional expressions).
 
 ``` r 
 vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")

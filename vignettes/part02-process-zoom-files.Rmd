@@ -114,7 +114,7 @@ batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx")
 ```
 
 ```{r, echo=FALSE, results="hide"}
-batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', "myMeetingsBatch.xlsx", package = 'zoomGroupStats'))
+batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
 ```
 
 `batchInput` gives the path to the batch file that you created by following the steps above. This function will iterate through the meetings listed in the `batchInput` file. For each meeting, the function will detect any of the named files described above and do an initial processing of them.
@@ -180,50 +180,4 @@ batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoo
 ```{r, eval=FALSE}
 batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="./myEditedRosetta.xlsx", 
 meetingId="batchMeetingId")
-```
-
-# Analyzing Data within `transcript` and `chat`
-
-## Cleaning text-based data
-
-## Performing sentiment analysis
-
-Using `textSentiment`
-
-```{r, eval=FALSE}
- transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
-```
-
-## Performing conversation analysis
-
-Using `textConversationAnalysis`
-
-```{r, eval=FALSE}
- convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
-```
-
-## Performing windowed conversation analysis
-
-Using `windowedTextConversationAnalysis`
-
-```{r, eval=FALSE}
- win.convo.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws", timeVar="utteranceStartSeconds", windowSize=600)
-```
-
-# Analyzing Video from Zoom
-
-## Parsing Zoom Video feed
-
-Using `grabVideoStills`
-
-```{r, eval=FALSE}
-grabVideoStills(inputVideo='sample_gallery_video.mp4', sampleWindow=45, stillPath="")
-```
-
-## Analyzing attributes of detected faces
-
-Using `videoFaceAnalysis`
-
-```{r, eval=FALSE}
-vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")
 ```
