@@ -7,14 +7,14 @@
 createZoomRosetta(zoomOutput)
 }
 \arguments{
-\item{zoomOutput}{the output from processZoomOutput file}
+\item{zoomOutput}{the output from running processZoomOutput}
 }
 \value{
 a data.frame that has unique values for the zoom display name
 that show up across any files that are available, including
 participants, transcript, and chat. If the user gives the participants
 file, it will separate display name changes and include all versions. If
-there are emails attached to display names, it will include those
+there are emails attached to display names, it will include those.
 }
 \description{
 A major challenge in analyzing virtual meetings is reconciling the display
@@ -24,6 +24,6 @@ further data anlaysis.
 }
 \examples{
 \dontrun{
-rosetta.out = createZoomRosetta(processZoomOutput(fileRoot="~/zoomMeetings/myMeeting"))
+rosetta.out = createZoomRosetta(processZoomOutput(fileRoot="~/zoomMeetings/meeting001"))
 }
 }

@@ -27,8 +27,21 @@ processZoomOutput(
 \item{languageCode}{string giving the language code}
 }
 \value{
-a named list containing data.frames for each of the available files
-(particiapnts, transcript, chat)
+a named list containing data.frames for each of the available files:
+\itemize{
+\item meetInfo - A single row with info for the meeting that is in the
+participants file. Columns provide information about the meeting from the Zoom
+Cloud recording site.
+\item partInfo - Each row is a Zoom display name (with display name changes
+in parentheses). Columns provide information about participants from the Zoom Cloud
+recording site.
+\item transcript - Each row is an utterance in the audio transcript. This is the
+output from processZoomTranscript.
+\item chat - Each row is a message posted to the chat. This is the output
+from processZoomChat.
+\item rosetta - Each row is a unique display name (within meeting) encountered
+in the batchInput. This is used to reconcile user identities.
+}
 }
 \description{
 Wrapper function to process the raw files from Zoom in a single call

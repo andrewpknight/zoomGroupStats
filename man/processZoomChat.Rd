@@ -11,20 +11,29 @@ processZoomChat(
 )
 }
 \arguments{
-\item{fname}{String that is the path to the exported Zoom .txt chat file}
+\item{fname}{String that is the path to the downloaded Zoom .txt chat file}
 
 \item{sessionStartDateTime}{String that is the start of the session in YYYY-MM-DD HH:MM:SS}
 
 \item{languageCode}{String denoting the language}
 }
 \value{
-data.frame where each record is a message submission in the chat.
+data.frame where each record is a message submission in the chat, containing columns:
+\itemize{
+\item messageId - Numeric identifier for each message, only unique within a given meeting
+\item messageSeconds - When message was posted, in number of seconds from start of session
+\item messageTime - When message was posted as POSIXct, using the supplied sessionStartDateTime
+\item userName - Display name of user who posted the message
+\item message - Text of the message that was posted
+\item messageLanguage - Language code for the message
+}
 }
 \description{
-This function parses the data from the chatfile that is downloaded from the Zoom website.
-NOTE: This is the file that accompanies a recording. This is not the file that you download directly within the window.
-It is also not the one that is saved locally on your computer.
-This is the file that you can access after a session if you record in the cloud.
+Parses the data from the chatfile that is downloaded from the Zoom Cloud recording
+site. Note that this is the file that accompanies a recording. This is not the file
+that you might download directly within a given Zoom session, nor is it the one
+that is saved locally on your computer. This is the file that you can access
+after a session if you record in the cloud.
 }
 \examples{
 ch.out = processZoomChat(

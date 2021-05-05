@@ -9,8 +9,12 @@
 #'
 #' @param inputPath character
 #'
-#' @return list where first item is a data.frame containing meeting-level information
-#' and second item is a data.frame with the participant-level information
+#' @return list of two data.frames with parsed information from the downloadable 
+#' Zoom participants file
+#' \itemize{
+#'     \item meetInfo - provides the meeting level information that Zoom Cloud gives
+#'     \item partInfo - provides the participant level information that Zoom Cloud gives
+#'}
 #' @export
 #'
 #' @examples

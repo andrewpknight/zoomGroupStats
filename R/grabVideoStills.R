@@ -1,13 +1,20 @@
 #' Helper function to split a video into still frames
-#' This function currently relies on a local install of ffmpeg to 
-#' split a video file into images. The images are saved locally
-#' in a directory that can be specified by the user or the function.
+#' 
+#' This function currently relies on either magick or 
+#' ffmpeg to split a video file into images. This function will save 
+#' the images locally in the same directory where the video is located.
 #' @param inputVideo full filepath to a video file
-#' @param sampleWindow framerate in seconds for the pull of images
-#' @param tryffmpeg boolean indicating whether you want it to try to use ffmpeg, which tends to be much faster than magick for splitting frames
+#' @param sampleWindow an integer indicating how frequently you want to sample
+#' images in number of seconds. 
+#' @param tryffmpeg boolean indicating whether you want it to try to use ffmpeg, 
+#' which tends to be much faster than magick for splitting frames
 #'
-#' @return a vector containing the names of 
-#' the images that were saved
+#' @return a dataframe that gives information about the still frames. Each record is 
+#' a stillframe, with the following info: 
+#' \itemize{
+#'    \item imageSeconds - number of seconds from the start of the video when this image was captured
+#'    \item imageName - full path to where the image has been saved as a .png 
+#' }
 #' @export
 #'
 #' @examples
@@ -25,7 +32,7 @@ grabVideoStills = function(inputVideo, sampleWindow, tryffmpeg=TRUE) {
   if(dir.exists(file.path(inname))) {
     choice = utils::select.list(c("Yes", "No"), title=paste("The ",outpath, " directory already exists. Do you want to delete the old directory and files and create a new one?", sep=""))
 
-  if(choice == "Yes") {
+  if(choice %in% c("Yes", 1)) {
       message("OK - This will delete the existing directory and files for ",basename(inputVideo), " in ",dirname(inputVideo), ".")
       unlink(file.path(inname), recursive=TRUE)
   } else {
@@ -55,6 +62,6 @@ grabVideoStills = function(inputVideo, sampleWindow, tryffmpeg=TRUE) {
 
   # How many images were actually created?
   imageNames = list.files(path=inname, pattern="*.png", full.names=T)  
-  return(imageNames)
+    return(imageNames)
 }
 

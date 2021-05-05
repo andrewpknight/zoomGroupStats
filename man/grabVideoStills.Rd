@@ -2,29 +2,31 @@
 % Please edit documentation in R/grabVideoStills.R
 \name{grabVideoStills}
 \alias{grabVideoStills}
-\title{Helper function to split a video into still frames
-This function currently relies on a local install of ffmpeg to
-split a video file into images. The images are saved locally
-in a directory that can be specified by the user or the function.}
+\title{Helper function to split a video into still frames}
 \usage{
 grabVideoStills(inputVideo, sampleWindow, tryffmpeg = TRUE)
 }
 \arguments{
 \item{inputVideo}{full filepath to a video file}
 
-\item{sampleWindow}{framerate in seconds for the pull of images}
+\item{sampleWindow}{an integer indicating how frequently you want to sample
+images in number of seconds.}
 
-\item{tryffmpeg}{boolean indicating whether you want it to try to use ffmpeg, which tends to be much faster than magick for splitting frames}
+\item{tryffmpeg}{boolean indicating whether you want it to try to use ffmpeg,
+which tends to be much faster than magick for splitting frames}
 }
 \value{
-a vector containing the names of
-the images that were saved
+a dataframe that gives information about the still frames. Each record is
+a stillframe, with the following info:
+\itemize{
+\item imageSeconds - number of seconds from the start of the video when this image was captured
+\item imageName - full path to where the image has been saved as a .png
+}
 }
 \description{
-Helper function to split a video into still frames
-This function currently relies on a local install of ffmpeg to
-split a video file into images. The images are saved locally
-in a directory that can be specified by the user or the function.
+This function currently relies on either magick or
+ffmpeg to split a video file into images. This function will save
+the images locally in the same directory where the video is located.
 }
 \examples{
 \dontrun{

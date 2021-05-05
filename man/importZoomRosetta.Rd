@@ -2,8 +2,9 @@
 % Please edit documentation in R/importZoomRosetta.R
 \name{importZoomRosetta}
 \alias{importZoomRosetta}
-\title{Import an edited zoomRosetta file that tells how to
-link up zoom display names to some unique individual
+\title{Helper function to add unique identifiers to processed Zoom downloads
+Import an edited zoomRosetta file that tells how to
+link up Zoom display names to some unique individual
 identifier}
 \usage{
 importZoomRosetta(zoomOutput, zoomRosetta, meetingId)
@@ -11,17 +12,18 @@ importZoomRosetta(zoomOutput, zoomRosetta, meetingId)
 \arguments{
 \item{zoomOutput}{the output of batchProcessZoomOutput}
 
-\item{zoomRosetta}{the path to an edited zoomRosetta}
+\item{zoomRosetta}{the path to an edited zoomRosetta xlsx}
 
 \item{meetingId}{the name of the meetingId you want to use}
 }
 \value{
-returns zoomOutput with the identifiers in zoomRosetta
-merged to each of the list items if they are available
+returns zoomOutput with identifiers in zoomRosetta
+merged to any available data.frames in the zoomOutput file
 }
 \description{
+Helper function to add unique identifiers to processed Zoom downloads
 Import an edited zoomRosetta file that tells how to
-link up zoom display names to some unique individual
+link up Zoom display names to some unique individual
 identifier
 }
 \examples{

@@ -8,8 +8,21 @@
 #' @param recordingStartDateTime  string giving the start of the recording in YYYY-MM-DD HH:MM:SS 
 #' @param languageCode string giving the language code
 #'
-#' @return a named list containing data.frames for each of the available files
-#'  (particiapnts, transcript, chat)
+#' @return a named list containing data.frames for each of the available files:
+#'  \itemize{
+#'     \item meetInfo - A single row with info for the meeting that is in the 
+#'     participants file. Columns provide information about the meeting from the Zoom
+#'     Cloud recording site.
+#'     \item partInfo - Each row is a Zoom display name (with display name changes 
+#'     in parentheses). Columns provide information about participants from the Zoom Cloud
+#'     recording site. 
+#'     \item transcript - Each row is an utterance in the audio transcript. This is the 
+#'     output from processZoomTranscript. 
+#'     \item chat - Each row is a message posted to the chat. This is the output 
+#'     from processZoomChat.
+#'     \item rosetta - Each row is a unique display name (within meeting) encountered 
+#'     in the batchInput. This is used to reconcile user identities. 
+#'     }
 #' @export
 #'
 #' @examples
@@ -29,9 +42,14 @@ processZoomOutput = function(fileRoot, rosetta=TRUE, sessionStartDateTime="1970-
     out.list[["meetInfo"]] = outInfo[[1]]
     out.list[["partInfo"]] = outInfo[[2]]	
     
-    # If the user includes a participants file, use the datetime information included in it	
-    sessionStartDateTime = outInfo[[1]]$meetingStartTime
-    recordingStartDateTime = outInfo[[1]]$meetingStartTime		
+    
+    # If there is a participants file, but there is no specified timestamps, use the datetime information included in it
+    if(sessionStartDateTime == "1970-01-01 00:00:00") {
+      sessionStartDateTime = outInfo[[1]]$meetingStartTime
+    }
+    if(recordingStartDateTime == "1970-01-01 00:00:00") {    
+      recordingStartDateTime = outInfo[[1]]$meetingStartTime		
+    }
   }
   
   if(file.exists(chatFile)) {

@@ -4,18 +4,38 @@
 #' function will process a set of meetings at once. 
 #'
 #' @param batchInput String giving the location of the xlsx file
-#' that contains the information for the zoom meetings
-#' @param exportZoomRosetta string giving the path for exporting the
-#' zoomRosetta file to link up unique individual IDs manually
+#' that contains the information for the zoom meetings. All corresponding
+#' Zoom downloads for the meetings in the batch must be saved in the same
+#' directory as the batchInput file. 
+#' @param exportZoomRosetta optional string giving the path for exporting the
+#' zoomRosetta file to link up unique individual IDs manually. Providing this
+#' path will write the zoomRosetta file to that location.
 #'
-#' @return a list that has a list item for each of the elements
-#' of a Zoom output that are available--batchInfo, meetInfo, partInfo, 
-#' transcript, chat, and rosetta
+#' @return a list that has a data.frame for each of the elements
+#' of a Zoom output that are available in the input directory: 
+#' \itemize{
+#'     \item batchInfo - Each row is a meeting included in batchInput. Columns 
+#'     provide information about each meeting.
+#'     \item meetInfo - Each row is a meeting for which there was a downloaded
+#'     participants file. Columns provide information about the meeting from the Zoom
+#'     Cloud recording site.
+#'     \item partInfo - Each row is a Zoom display name (with display name changes 
+#'     in parentheses). Columns provide information about participants from the Zoom Cloud
+#'     recording site. 
+#'     \item transcript - Each row is an utterance in the audio transcript. This is the 
+#'     output from processZoomTranscript. 
+#'     \item chat - Each row is a message posted to the chat. This is the output 
+#'     from processZoomChat.
+#'     \item rosetta - Each row is a unique display name (within meeting) encountered 
+#'     in the batchInput. This is used to reconcile user identities. 
+#' }
+#'   
 #' @export
 #'
 #' @examples
 #' batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 
 #' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
+#' 
 batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchInfo = openxlsx::read.xlsx(batchInput)
   
@@ -32,9 +52,10 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchChat$messageTime = as.POSIXct(batchChat$messageTime)	
   
   batchRosetta = data.frame(userName=character(), userEmail=character(), batchMeetingId=character())	
+  pb = utils::txtProgressBar(min=1, max=nrow(batchInfo), style=3)  
   for(r in 1:nrow(batchInfo)) {
-    
-    zoomOut = processZoomOutput(file.path(dirname(batchInput),batchInfo[r, "fileRoot"]))
+    utils::setTxtProgressBar(pb, r)    
+    zoomOut = processZoomOutput(file.path(dirname(batchInput),batchInfo[r, "fileRoot"]), sessionStartDateTime=batchInfo[r, "sessionStartDateTime"], recordingStartDateTime=batchInfo[r, "recordingStartDateTime"])
     
     if(!is.null(zoomOut$meetInfo)) {
       zoomOut$meetInfo$batchMeetingId = batchInfo[r, "batchMeetingId"]
@@ -59,14 +80,14 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
     if(!is.null(zoomOut$rosetta)) {
       zoomOut$rosetta$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchRosetta = rbind(batchRosetta, zoomOut$rosetta)
-    
-      if(!is.null(exportZoomRosetta)) {
-        openxlsx::write.xlsx(zoomOut$rosetta, exportZoomRosetta)      	
-      }
     }	
     
   }
-  
+  close(pb)
   batchOut = list("batchInfo" = batchInfo, "meetInfo" = batchMeetInfo, "partInfo" = batchPartInfo, "transcript" = batchTranscript, "chat" = batchChat, "rosetta" = batchRosetta)
+  if(!is.null(exportZoomRosetta)) {
+    openxlsx::write.xlsx(batchOut$rosetta, exportZoomRosetta)      	
+  }  
+
   return(batchOut)
 }

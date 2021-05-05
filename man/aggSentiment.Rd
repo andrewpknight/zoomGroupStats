@@ -2,11 +2,9 @@
 % Please edit documentation in R/aggSentiment.R
 \name{aggSentiment}
 \alias{aggSentiment}
-\title{Helper function to aggregate sentiment variables
-This is just a simple helper function that is used to aggregate the
-sentiment variables}
+\title{Helper function to aggregate sentiment variables}
 \usage{
-aggSentiment(inputData, meetingId, indivId, sentMethod)
+aggSentiment(inputData, meetingId = NULL, indivId = NULL, sentMethod)
 }
 \arguments{
 \item{inputData}{data.frame that has been output from textSentiment function}
@@ -15,21 +13,25 @@ aggSentiment(inputData, meetingId, indivId, sentMethod)
 
 \item{indivId}{string that indicates the name of the variable containing the speaker identity}
 
-\item{sentMethod}{string that indicates what type of sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'}
+\item{sentMethod}{string that indicates what type of
+sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'}
 }
 \value{
-A list with data.frames. The first gives sentiment variables at the corpus level of analysis
-The second gives sentiment variables at the speaker level of analysis.
+A data.frame giving the sentiment metrics aggregated to the requested level. If only meetingId
+is specified, metrics are aggregated to that level. If only indivId is specified, metrics
+are aggregated to the individual level across any meetings. If both meetingId and indivId
+are specified, metrics are aggregated to the level of the individual within meeting.
 }
 \description{
-Helper function to aggregate sentiment variables
-This is just a simple helper function that is used to aggregate the
-sentiment variables
+Used to aggregate the sentiment variables to the individual
+and meeting levels
 }
 \examples{
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
 meetingId="batchMeetingId", indivId = "userId", sentMethod="aws")
 
+\dontrun{
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
 meetingId="batchMeetingId", indivId = "userId", sentMethod="syuzhet")
+}
 }

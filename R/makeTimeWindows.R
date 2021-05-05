@@ -1,11 +1,17 @@
 #' Helper function that creates temporal windows in datasets
+#' 
+#' This creates a set of temporal windows of specified size so that metrics 
+#' can be computed within those windows. 
 #'
-#' @param inputData data.frame that is output from processZoomTranscript or processZoomChat 
+#' @param inputData data.frame that has data over time, usually within a single meeting 
 #' @param timeVar name of a numeric column that contains the time variable you want to use
 #' @param windowSize numeric value giving the length of time window 
 #'
-#' @return list with two data.frames. The first is inputData with the temporal windows.
-#' The second is the full set of temporal windows. 
+#' @return list with two data.frames:
+#' \itemize{
+#'     \item windowedData - inputData with the temporal window identifying information included
+#'     \item allWindows - contains the full set of temporal windows and identifying information. This is valuable because inputData may not have records within all of the possible temporal windows
+#'  }
 #' @export
 #'
 #' @examples

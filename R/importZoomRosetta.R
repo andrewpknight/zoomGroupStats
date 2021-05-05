@@ -1,13 +1,15 @@
+#' Helper function to add unique identifiers to processed Zoom downloads
+
 #' Import an edited zoomRosetta file that tells how to 
-#' link up zoom display names to some unique individual
+#' link up Zoom display names to some unique individual
 #' identifier
 #'
 #' @param zoomOutput the output of batchProcessZoomOutput
-#' @param zoomRosetta the path to an edited zoomRosetta
+#' @param zoomRosetta the path to an edited zoomRosetta xlsx
 #' @param meetingId the name of the meetingId you want to use
 #'
-#' @return returns zoomOutput with the identifiers in zoomRosetta
-#' merged to each of the list items if they are available
+#' @return returns zoomOutput with identifiers in zoomRosetta
+#' merged to any available data.frames in the zoomOutput file 
 #' @export
 #'
 #' @examples

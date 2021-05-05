@@ -18,7 +18,18 @@ processZoomTranscript(
 \item{languageCode}{String denoting the language}
 }
 \value{
-data.frame where each record is an utterance in the transcript
+data.frame where each record is an utterance in the transcript, with columns:
+\itemize{
+\item utteranceId - Numeric identifier for each utterance in the transcript
+\item utteranceStartSeconds - number of seconds from the start of the recording when utterance began
+\item utteranceStartTime - POSIXct timestamp of the start of the utterance, using recordingStartDateTime as the zero
+\item utteranceEndSeconds - number of seconds from the start of the recording when utterance ended
+\item utteranceEndTime - POSIXct timestamp of the end of the utterance, using recordingStartDateTime as the zero
+\item utteranceTimeWindow - number of seconds that this utterance lasted
+\item userName - Zoom display name of the person who spoke this utterance
+\item utteranceMessage - transcribed spoken words of this utterance
+\item utteranceLanguage - language code for this utterance
+}
 }
 \description{
 Process Zoom transcript file
