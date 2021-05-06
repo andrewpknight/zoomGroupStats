@@ -36,7 +36,7 @@ for chat use 'messageTime'}
 }
 \value{
 list with two data.frames. In the first, each row is a temporal window.
-In the second, each row is a user at a given temporal window.
+In the second, each row is a user's metrics within a given temporal window.
 }
 \description{
 Run a windowed analysis on either a Zoom transcript or chat

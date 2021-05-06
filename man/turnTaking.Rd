@@ -14,7 +14,19 @@ turnTaking(inputData, inputType, speakerId)
 \item{speakerId}{string giving the name of the variable with the identity of the speaker}
 }
 \value{
-list of four data.frames. The named items provide different views of turntaking.
+list of four data.frames giving different levels of analysis for turn taking:
+\itemize{
+\item rawTurn - This data.frame gives a dataset with a
+lagged column so that you could calculate custom metrics
+\item aggTurnsDyad - This gives a dyad-level dataset so that
+you know whose speech patterns came before whose
+\item aggTurnsSpeaker - This gives a speaker-level dataset
+with metrics that you could use to assess each given
+person's influence on the conversation
+\item aggTurnsSpeaker_noself - This is a replication of
+the aggTurnsSpeaker dataset, but it excludes turns where
+a speaker follows themself
+}
 }
 \description{
 Generate a very basic analysis of the conversational turntaking in

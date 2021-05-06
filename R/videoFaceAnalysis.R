@@ -6,8 +6,7 @@
 #' @param facesCollectionID name of an AWS collection with identified faces
 #' @param videoImageDirectory path to a directory containing pre-split images. This will skip the splitting of an image file, but it presumes that images were pre-split using grabVideoStills
 #'
-#' @return data.frame with one record for every face detected in each frame
-#' for each face, there is an abundance of information from AWS rekognition
+#' @return data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from AWS rekognition. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment. 
 #' @export
 #'
 #' @examples
