@@ -1,4 +1,11 @@
 #' Analyze the facial features within an exported Zoom video file
+#' 
+#' Using this function you can analyze attributes of facial expressions within 
+#' a video file. There are two ways to supply the video information. First, you 
+#' can provide the actual video file. The function will then break it down 
+#' into still frames using the grabVideoStills() function. Second, you can use 
+#' the videoImageDirectory argument to give the location of a directory where 
+#' images have been pre-saved. 
 #'
 #' @param inputVideo string path to the video file (ideal is gallery)
 #' @param recordingStartDateTime YYYY-MM-DD HH:MM:SS of the start of the recording

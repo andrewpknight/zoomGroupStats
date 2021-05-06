@@ -27,7 +27,12 @@ videoFaceAnalysis(
 data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from AWS rekognition. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment.
 }
 \description{
-Analyze the facial features within an exported Zoom video file
+Using this function you can analyze attributes of facial expressions within
+a video file. There are two ways to supply the video information. First, you
+can provide the actual video file. The function will then break it down
+into still frames using the grabVideoStills() function. Second, you can use
+the videoImageDirectory argument to give the location of a directory where
+images have been pre-saved.
 }
 \examples{
 \dontrun{

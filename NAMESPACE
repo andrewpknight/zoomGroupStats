@@ -3,6 +3,7 @@
 export(aggSentiment)
 export(batchGrabVideoStills)
 export(batchProcessZoomOutput)
+export(batchVideoFaceAnalysis)
 export(createZoomRosetta)
 export(grabVideoStills)
 export(importZoomRosetta)
