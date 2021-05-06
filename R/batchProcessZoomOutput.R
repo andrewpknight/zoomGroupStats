@@ -37,7 +37,15 @@
 #' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
 #' 
 batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
+  
+  
+  if(!file.exists(batchInput)) {
+    stop("Cannot find the specified batchInput file: ",batchInput)
+    
+  }
   batchInfo = openxlsx::read.xlsx(batchInput)
+  batchInfo[,c("participants_processed", "transcript_processed", "chat_processed", "video_processed")] = 0
+  batchInfo$dirRoot = dirname(batchInput)
   
   ### Initialize the output frames that will be filled ###
   batchMeetInfo = data.frame(meetingId=character(), meetingTopic=character(), meetingStartTime=character(), meetingEndTime=character(), userEmail=character(), meetingDuration=integer(), numParticipants=integer(), batchMeetingId=character())
@@ -51,8 +59,10 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   batchChat = data.frame(messageId=integer(), messageSeconds=numeric(), messageTime=character(), userName=character(), message=character(), messageLanguage=character(), batchMeetingId=character())
   batchChat$messageTime = as.POSIXct(batchChat$messageTime)	
   
-  batchRosetta = data.frame(userName=character(), userEmail=character(), batchMeetingId=character())	
-  pb = utils::txtProgressBar(min=1, max=nrow(batchInfo), style=3)  
+  batchRosetta = data.frame(userName=character(), userEmail=character(), batchMeetingId=character())
+  message("Processing any correctly named Zoom downloads in ",dirname(batchInput))	
+  if(nrow(batchInfo) == 1) pbMin=0 else pbMin=1  
+  pb = utils::txtProgressBar(min=pbMin, max=nrow(batchInfo), style=3)  
   for(r in 1:nrow(batchInfo)) {
     utils::setTxtProgressBar(pb, r)    
     zoomOut = processZoomOutput(file.path(dirname(batchInput),batchInfo[r, "fileRoot"]), sessionStartDateTime=batchInfo[r, "sessionStartDateTime"], recordingStartDateTime=batchInfo[r, "recordingStartDateTime"])
@@ -65,22 +75,26 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
     if(!is.null(zoomOut$partInfo)) {
       zoomOut$partInfo$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchPartInfo = rbind(batchPartInfo, zoomOut$partInfo)
+      batchInfo$participants_processed = 1
     }
     
     if(!is.null(zoomOut$transcript)) {
       zoomOut$transcript$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchTranscript = rbind(batchTranscript, zoomOut$transcript)
+      batchInfo$transcript_processed = 1      
     }		
     
     if(!is.null(zoomOut$chat)) {
       zoomOut$chat$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchChat = rbind(batchChat, zoomOut$chat)
+      batchInfo$chat_processed = 1            
     }
     
-    if(!is.null(zoomOut$rosetta)) {
+    if(!is.null(zoomOut$rosetta) && nrow(zoomOut$rosetta) > 0) {
       zoomOut$rosetta$batchMeetingId = batchInfo[r, "batchMeetingId"]
       batchRosetta = rbind(batchRosetta, zoomOut$rosetta)
     }	
+    
     
   }
   close(pb)
@@ -88,6 +102,6 @@ batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   if(!is.null(exportZoomRosetta)) {
     openxlsx::write.xlsx(batchOut$rosetta, exportZoomRosetta)      	
   }  
-
+  
   return(batchOut)
 }

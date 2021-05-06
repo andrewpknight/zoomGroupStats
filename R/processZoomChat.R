@@ -32,11 +32,6 @@ processZoomChat = function(fname, sessionStartDateTime="1970-01-01 00:00:00", la
   
   ch = utils::read.delim(fname, sep="\t", stringsAsFactors=F, header=F, col.names=c("messageIncrement", "userName", "message"), quote="")
   
-  sessionStartDateTime = as.POSIXct(sessionStartDateTime, tz=Sys.timezone())
-  
-  ch$messageSeconds = as.numeric(lubridate::seconds(lubridate::hms(ch$messageIncrement)))
-  ch$messageTime = sessionStartDateTime + ch$messageSeconds
-  
   ####################################
   # Chat transcripts do not handle soft returns well (i.e., if the same person uses a soft line break 
   # for multiple lines in a single message that is submitted to the system). 
@@ -46,22 +41,29 @@ processZoomChat = function(fname, sessionStartDateTime="1970-01-01 00:00:00", la
   
   # Create a flag to mark erroneous records based on the message time variable. This should be made stronger
   # and cleaner eventually
-  ch$flag = is.na(as.integer(substr(ch$messageIncrement,1,1))) + (nchar(ch$messageIncrement) != 8)
+  ch$flag = ifelse(!(grepl('(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)', ch$messageIncrement)) | ch$userName=="", TRUE, FALSE)
   
   # Assign the value in the message_increment variable to the message variable. This is because
-  # the parsing of the file is fucked up when there are soft returns in someone's chat message
-  ch$message = ifelse(ch$flag > 0, ch$messageIncrement, ch$message)
+  # the parsing of the file is screwed up when there are soft returns in someone's chat message
+  ch$message = ifelse(ch$flag, ch$messageIncrement, ch$message)
   
   # Go through the records from the bottom up to paste the message on the one it 
   # should be part of
   for(i in nrow(ch):1) {
-    if(ch[i,"flag"] > 0) {
+    if(ch[i,"flag"]) {
       ch[(i-1), "message"] = paste(ch[(i-1), "message"], ch[i, "message"], sep=" ")
     }
   }
   
   # now drop the unnecessary records
-  ch = ch[ch$flag == 0, ]
+  ch = ch[!ch$flag, ]
+  
+  # Apply date and time
+  sessionStartDateTime = as.POSIXct(sessionStartDateTime, tz=Sys.timezone())
+  
+  ch$messageSeconds = as.numeric(lubridate::seconds(lubridate::hms(ch$messageIncrement)))
+  ch$messageTime = sessionStartDateTime + ch$messageSeconds
+  
   
   # get rid of whitespace at the beginning and end
   ch$message = gsub("^\\s+|\\s+$", "", ch$message)

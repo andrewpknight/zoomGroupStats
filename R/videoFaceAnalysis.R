@@ -35,7 +35,7 @@ videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, f
   
   # Now loop through the images that are part of this video (which were already extracted)
   message("Analyzing faces in sampled frames. For lots of images and lots of faces, this can be time intensive.")
-  pb = utils::txtProgressBar(min=1, max=length(imgFiles), style=3)
+  pb = utils::txtProgressBar(min=0, max=length(imgFiles), style=3)
   for(i in 1:length(imgFiles)) {
     utils::setTxtProgressBar(pb, i)
     # Pull the image and its information

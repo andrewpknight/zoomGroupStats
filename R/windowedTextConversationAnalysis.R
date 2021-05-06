@@ -20,24 +20,29 @@
 #' win.text.out = windowedTextConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
 #' inputType="transcript", meetingId="batchMeetingId", speakerId="userName", sentMethod="aws", 
 #' timeVar="utteranceStartSeconds", windowSize=600)
-windowedTextConversationAnalysis = function(inputData, inputType, meetingId, speakerId, sentMethod="none", timeVar, windowSize) {
+windowedTextConversationAnalysis = function(inputData, inputType, meetingId, speakerId, sentMethod="none", timeVar="automatic", windowSize) {
   
+  if(timeVar=="automatic") {
+   
+    if(inputType=="transcript") timeVar="utteranceStartSeconds"
+    else if(inputType=="chat") timeVar="messageSeconds"
+  }
   
+  inputData = dplyr::arrange(inputData, get(meetingId), get(timeVar))  
   ##### WINDOWING NEEDS TO HAPPEN IN A MEETING-BY-MEETING SEQUENCE #####
   
   uniqueMeetings = unique(inputData[,meetingId])
-  
+  if(length(uniqueMeetings) == 1) pbMin=0 else pbMin=1  
+  pb = utils::txtProgressBar(min=pbMin, max=length(uniqueMeetings), style=3)
   for(m in 1:length(uniqueMeetings)) {
+    utils::setTxtProgressBar(pb, m)    
     thisMeetingId = uniqueMeetings[m]
     meetingData = inputData[inputData[,meetingId] == thisMeetingId, ]
-    # We need to add a variable to the chat out that is number of seconds
-    if(inputType=="chat" && timeVar=="messageTime") {
-      meetingData[, "messageTimeSeconds"] = as.numeric(difftime(meetingData[,"messageTime"],min(meetingData[,"messageTime"]),units="secs")) 
-      timeVar = "messageTimeSeconds"		
-    }
+    
     # Add the windowing indicators to the inputData
     t.out.windowed = makeTimeWindows(inputData=meetingData, timeVar=timeVar, windowSize=windowSize)
     meetingData = t.out.windowed[[1]] 
+    
     fullSet = cbind(t.out.windowed[[2]], sort(rep(unique(meetingData[, speakerId]), max(t.out.windowed[[2]]$windowId))))
     fullSet = fullSet[order(fullSet$windowId), ]
     names(fullSet)[4] = speakerId
@@ -73,10 +78,10 @@ windowedTextConversationAnalysis = function(inputData, inputType, meetingId, spe
     
     if(inputType=="transcript") {
       ind.fixVars = c("utteranceTimeWindow_sum", "numUtterances") 
-      grp.fixVars = c(ind.fixVars, "totalRecordedTime", "silentTime_sum", "numUniqueSpeakers")
+      grp.fixVars = c(ind.fixVars, "totalTranscriptTime", "silentTime_sum", "numUniqueSpeakers")
     } else if(inputType=="chat") {
       ind.fixVars = c("numMessages", "messageNumChars_sum")
-      grp.fixVars = c(ind.fixVars, "numUniqueMessagers", "totalRecordedTime")
+      grp.fixVars = c(ind.fixVars, "numUniqueMessagers", "totalChatTime")
     }
     
     # Add these to the full time window datasets
@@ -95,6 +100,8 @@ windowedTextConversationAnalysis = function(inputData, inputType, meetingId, spe
       full.grp = rbind(full.grp, grp1)
       full.ind = rbind(full.ind, indFull)
     }
+
   }
+  close(pb)
   return(list("windowlevel" = full.grp, "speakerlevel" = full.ind))
 }

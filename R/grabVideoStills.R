@@ -9,7 +9,7 @@
 #' @param tryffmpeg boolean indicating whether you want it to try to use ffmpeg, 
 #' which tends to be much faster than magick for splitting frames
 #'
-#' @return a dataframe that gives information about the still frames. Each record is 
+#' @return a data.frame that gives information about the still frames. Each record is 
 #' a stillframe, with the following info: 
 #' \itemize{
 #'    \item imageSeconds - number of seconds from the start of the video when this image was captured

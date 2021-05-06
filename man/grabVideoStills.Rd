@@ -16,7 +16,7 @@ images in number of seconds.}
 which tends to be much faster than magick for splitting frames}
 }
 \value{
-a dataframe that gives information about the still frames. Each record is
+a data.frame that gives information about the still frames. Each record is
 a stillframe, with the following info:
 \itemize{
 \item imageSeconds - number of seconds from the start of the video when this image was captured

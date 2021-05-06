@@ -4,12 +4,14 @@
 \alias{turnTaking}
 \title{Simple conversational turn-taking analysis}
 \usage{
-turnTaking(inputData, inputType, speakerId)
+turnTaking(inputData, inputType, meetingId, speakerId)
 }
 \arguments{
 \item{inputData}{data.frame output from either processZoomChat or processZoomTranscript}
 
 \item{inputType}{string of either 'chat' or 'transcript'}
+
+\item{meetingId}{string giving the name of the meeting identifier}
 
 \item{speakerId}{string giving the name of the variable with the identity of the speaker}
 }
@@ -25,7 +27,7 @@ with metrics that you could use to assess each given
 person's influence on the conversation
 \item aggTurnsSpeaker_noself - This is a replication of
 the aggTurnsSpeaker dataset, but it excludes turns where
-a speaker follows themself
+a speaker self-follows (i.e., Speaker A => Speaker A)
 }
 }
 \description{
@@ -34,7 +36,7 @@ either a Zoom transcript or a Zoom chat file.
 }
 \examples{
 turn.out = turnTaking(inputData=sample_transcript_processed, 
-inputType='transcript', 
+inputType='transcript', meetingId='batchMeetingId', 
 speakerId='userName')
 
 }

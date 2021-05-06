@@ -4,22 +4,22 @@
 \alias{aggSentiment}
 \title{Helper function to aggregate sentiment variables}
 \usage{
-aggSentiment(inputData, meetingId = NULL, indivId = NULL, sentMethod)
+aggSentiment(inputData, meetingId = NULL, speakerId = NULL, sentMethod)
 }
 \arguments{
 \item{inputData}{data.frame that has been output from textSentiment function}
 
 \item{meetingId}{string that indicates the name of the variable containing the meeting ID}
 
-\item{indivId}{string that indicates the name of the variable containing the speaker identity}
+\item{speakerId}{string that indicates the name of the variable containing the speaker identity}
 
 \item{sentMethod}{string that indicates what type of
 sentiment analysis to aggregate--must be either 'aws' or 'syuzhet'}
 }
 \value{
 A data.frame giving the sentiment metrics aggregated to the requested level. If only meetingId
-is specified, metrics are aggregated to that level. If only indivId is specified, metrics
-are aggregated to the individual level across any meetings. If both meetingId and indivId
+is specified, metrics are aggregated to that level. If only speakerId is specified, metrics
+are aggregated to the individual level across any meetings. If both meetingId and speakerId
 are specified, metrics are aggregated to the level of the individual within meeting.
 }
 \description{
@@ -28,10 +28,10 @@ and meeting levels
 }
 \examples{
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
-meetingId="batchMeetingId", indivId = "userId", sentMethod="aws")
+meetingId="batchMeetingId", speakerId = "userId", sentMethod="aws")
 
 \dontrun{
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
-meetingId="batchMeetingId", indivId = "userId", sentMethod="syuzhet")
+meetingId="batchMeetingId", speakerId = "userId", sentMethod="syuzhet")
 }
 }

@@ -21,10 +21,17 @@ importZoomRosetta = function(zoomOutput, zoomRosetta, meetingId) {
   zoomRosettaUpdate = openxlsx::read.xlsx(zoomRosetta)
   zoomOutput$rosetta=zoomRosettaUpdate
   if(!is.null(zoomOutput$transcript)) {
-    zoomOutput$transcript = merge(zoomOutput$transcript, zoomRosettaUpdate, by=c(meetingId, "userName"), all.x=T)    
+    zoomOutput$transcript = merge(zoomOutput$transcript, zoomRosettaUpdate, by=c(meetingId, "userName"), all.x=T) 
+    zoomOutput$transcript = zoomOutput$transcript[
+      with(zoomOutput$transcript, 
+           order(zoomOutput$transcript[,meetingId], zoomOutput$transcript$utteranceId)), ]    
   }
   if(!is.null(zoomOutput$chat)) {
     zoomOutput$chat = merge(zoomOutput$chat, zoomRosettaUpdate, by=c(meetingId, "userName"), all.x=T)
+    zoomOutput$chat = zoomOutput$chat[
+      with(zoomOutput$chat, 
+           order(zoomOutput$chat[,meetingId], zoomOutput$chat$messageId)), ]    
+    
   }
   if(!is.null(zoomOutput$partInfo)) {    
     zoomOutput$partInfo = merge(zoomOutput$partInfo[,c(meetingId, "userName", "userGuest")], zoomRosettaUpdate, by=c(meetingId, "userName"), all.x=T)

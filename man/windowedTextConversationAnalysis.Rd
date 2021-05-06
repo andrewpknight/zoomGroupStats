@@ -13,7 +13,7 @@ windowedTextConversationAnalysis(
   meetingId,
   speakerId,
   sentMethod = "none",
-  timeVar,
+  timeVar = "automatic",
   windowSize
 )
 }

@@ -16,7 +16,7 @@ textSentiment(
 \arguments{
 \item{inputData}{data.frame that has been output by either the processZoomTranscript or processZoomChat functions}
 
-\item{idVars}{vector with the name of variables that give the unique identifiers for this piece of text}
+\item{idVars}{vector with the name of variables that give the unique identifiers for this piece of text. Usually this will be a the meeting id variable and the text id variable (e.g., utteranceId, messageId)}
 
 \item{textVar}{name of variable that contains the text}
 
@@ -42,7 +42,8 @@ However you authenticate for AWS, you should do so before running calling the fu
 with this option in sentMethods
 }
 \examples{
-sent.out = textSentiment(inputData=sample_transcript_processed, idVar=c('utteranceId'), 
+sent.out = textSentiment(inputData=sample_transcript_processed, 
+idVars=c('batchMeetingId','utteranceId'), 
 textVar='utteranceMessage', sentMethods='syuzhet', 
 appendOut=FALSE, languageCodeVar='utteranceLanguage')
 }
