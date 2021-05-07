@@ -72,15 +72,15 @@ All 8 files should be saved in a single directory.
 
 ## Prepare a Batch Spreadsheet
 
-Next, you will prepare a spreadsheet in .xlsx format. This spreadsheet tells `zoomGroupStats` how to find your files and what information to process. Practically, this spreadsheet is also helpful for organizing your data and keeping track of what you have downloaded. 
+Next, you will prepare a spreadsheet in .xlsx format and save it within the same directory where your Zoom downloads are. This spreadsheet tells `zoomGroupStats` how to find your files and what information to process. Practically, this spreadsheet is also helpful for organizing your data and keeping track of what you have downloaded. 
 
 You must use the following structure and column headers for your spreadsheet:
 
-| batchMeetingId | fileRoot | participants | transcript | chat | video |
-|:---------------|:---------|:-------------|:-----------|:-----|:------|
-|   00000000001  |  /myMeetings/meeting001  |    1   |    1  | 1 | 0 |
-|   00000000002  |  /myMeetings/meeting002  |    1   |    1  | 1 | 0 |
-|   00000000003  |  /myMeetings/meeting003  |    1   |    1  | 1 | 0 |
+| batchMeetingId | fileRoot | participants | transcript | chat | video | sessionStartTime | recordingStartDateTime |
+|:---------------|:---------|:-------------|:-----------|:-----|:------|:--------|:--------|
+|   00000000001  |  /myMeetings/meeting001  |    1   |    1  | 1 | 0 | 2020-09-04 15:00:00 | 2020-09-04 15:03:30 |
+|   00000000002  |  /myMeetings/meeting002  |    1   |    1  | 1 | 0 | 2020-09-05 15:00:00 | 2020-09-04 15:03:04 |
+|   00000000003  |  /myMeetings/meeting003  |    1   |    1  | 1 | 0 | 2020-09-06 15:00:00 | 2020-09-04 15:03:07 |
 
 The first row in the file is the header, which should mirror the example above. Each subsequent row provides the information for a single meeting. [Here is a sample that you could use](https://github.com/andrewpknight/zoomGroupStats/blob/main/inst/extdata/myMeetingsBatch.xlsx), replacing any rows after the header with your own information.
 
@@ -92,13 +92,19 @@ The first row in the file is the header, which should mirror the example above. 
 | transcript | Binary - 0 if you did not download the transcript file, 1 if you did |
 | chat | Binary - 0 if you did not download the chat file, 1 if you did |
 | video | Binary - 0 if you did not download a video file, 1 if you did |
+| sessionStartDateTime | A string giving the timestamp for when the meeting began as YYYY-MM-DD HH:MM:SS |
+| recordingStartDateTime | A string giving the timestamp for when the recording of the meeting began as YYYY-MM-DD HH:MM:SS |
 
 ## Process your Batch
 
-If you have followed the steps above, turning your Zoom sessions into data should be straightforward using the `zoomGroupStats` package.You should begin by installing the latest version of `zoomGroupStats`. Currently this is done through the `install_github` function from the `devtools` package: 
+If you have followed the steps above, turning your Zoom sessions into data should be straightforward using the `zoomGroupStats` package.You should begin by installing the latest version of `zoomGroupStats`. Currently this is best done through the `install_github` function from the `devtools` package: 
 
 ```{r, eval=FALSE}
-devtools::install_github("https://github.com/andrewpknight/zoomGroupStats")
+# Install zoomGroupStats from CRAN
+install.packages("zoomGroupStats")
+
+# Install the development version of zoomGroupStats
+devtools::install_github("andrewpknight/zoomGroupStats")
 ```
 
 After you have installed the package, you can then load it into your environment as usual: 
@@ -113,17 +119,25 @@ The first step in turning downloads into data is to process your batch using the
 batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx")
 ```
 
-```{r, echo=FALSE, results="hide"}
-batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
+```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='hide'}
+batchOut = invisible(batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats')))
 ```
 
-`batchInput` gives the path to the batch file that you created by following the steps above. This function will iterate through the meetings listed in the `batchInput` file. For each meeting, the function will detect any of the named files described above and do an initial processing of them.
+This function will iterate through the meetings listed in the `batchInput` file that you created above. For each meeting, the function will detect any of the named files described above (except the video file) and do an initial processing of them. The function currently ignores the video file because video processing can take a considerable amount of time. [Processing video data will be covered in Part 4](http://zoomgroupstats.org/articles/part04-analyze-zoom-video-data.html). 
 
 The output, stored in this example in `batchOut`, will be a multi-item list that contains any data that were available according to the batch instructions. Currently, the following items can be included, if raw files are available: 
 
+### batchInfo
+
+This is information about the batch, drawn from the input batch file that you have supplied. It is heplful to have this information stored for later analysis of the different components of a Zoom recording. 
+
+```{r}
+str(batchOut$batchInfo)
+```
+
 ### meetInfo & partInfo
 
-These two items provide meta-data about the full set of virtual meetings. These are useful files for nailing down the structure of your full dataset (in terms of individuals nested within meetings) and for creating a unique individual identifier for the people in your dataset. 
+These are based on information extracted from the participants file downloaded from Zoom. If a meeting has a *_participants.csv file, these will be included. They provide meta-data about the full set of virtual meetings. These are useful files for nailing down the structure of your full dataset (in terms of individuals nested within meetings) and for creating a unique individual identifier for the people in your dataset. 
 
 `meetInfo` is a data.frame that gives information pulled about the meetings from the participants file downloaded from Zoom. Each row in this file is a meeting: 
 
@@ -173,7 +187,11 @@ I have found that by exporting the `rosetta` file and manually attaching a uniqu
 ```{r, eval=FALSE}
 batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoomRosetta="./myMeetings_rosetta_original.xlsx")
 ```
-* Manually review this file, adding a new column with your unique user identifier (e.g., `indivId`). This should be a persistent identifier for the *person*--something that is repeated across multiple meetings that someone is in. Save your file with a new name so that you don't accidentally overwrite it by re-running the command above. 
+* Copy the file that you have exported and save it with a new name (e.g., myMeetings_rosetta_edited.xlsx). This will prevent you from losing your manual work if you re-run the command above and overwrite the file. 
+
+* Add a new column to the new file that contains a unique user identifier. Name the column something like 'indivId'. In this column you will enter a persistent individual identifier for individuals in your dataset. 
+
+* Manually review the file, entering the unique identifier that is correct for each Zoom display name. I tend to sort the file by the Zoom display name column first. This increases the chances of catching the same person who shows up in multiple meetings or slightly different names (e.g., Ringo, Ringo Starr). For unique identifier, I recommend either using a master numeric identifier or email address that connects to other data streams that you might have. 
 
 * Import the reviewed and edited rosetta file. The following command will import the file and add your new identifier to each of the elements that are included in `batchOut`. Going forward, you should use the new individual identifier (e.g., `indivId`) in your analyses. Together with the meeting identifier (e.g., `batchMeetingId`), you will be able to link records to other relevant data that you have collected (e.g., survey data). 
 
@@ -181,3 +199,9 @@ batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx", exportZoo
 batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="./myEditedRosetta.xlsx", 
 meetingId="batchMeetingId")
 ```
+
+Running the importZoomRosetta command will attach the new unique identifier that you have created to the datasets that you created before for any of the available files in your directory. 
+
+## Next Steps
+
+Following the process above, you should have a single R object with a tremendous amount of information. [Part 3 of this guide will cover how to analyze the conversational data in this R object](http://zoomgroupstats.org/articles/part03-analyze-zoom-conversation-data.html).

@@ -3,7 +3,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-Social science research has been moving into the virtual realm for more than a decade. Beyond the rise of mTurk, Prolific, and other crowd-sourced participant pools, researchers have increasingly relied on web-based modes of data collection. The purpose of this package is to enable researchers to efficiently use the virtual meetings platform Zoom to collect data that illuminates how people interact with one another. The focal research areas that have motivated the package so far are group dynamics and interpersonal relations. However, the basic tools in this package could be of use to a broad range of research domains. (They also are helpful for supplementing instructor judgment in assessing class participation in virtual courses...). With this package you will be able to:
+Social science research has been moving into the virtual realm for more than a decade. Beyond the rise of mTurk, Prolific, and other crowd-sourced participant pools, researchers have increasingly relied on web-based modes of data collection. 
+
+The purpose of this package is to enable researchers to efficiently use the virtual meetings platform Zoom to collect data that illuminates how people interact with one another. The focal research areas that have motivated the package so far are group dynamics and interpersonal relations. However, the basic tools in this package could be of use to a broad range of research domains. (They also are helpful for supplementing instructor judgment in assessing class participation in virtual courses...). With this package you will be able to:
 
 1. [quickly turn files downloaded from Zoom into datasets](http://zoomgroupstats.org/articles/part02-process-zoom-files.html)
 1. [analyze the dynamics of spoken and text conversations in virtual meetings](http://zoomgroupstats.org/articles/part03-analyze-zoom-conversation-data.html)
@@ -13,7 +15,9 @@ This is a project that is actively in development. For the most up-to-date docum
 
 ## Getting Started Conducting Research Using Zoom
 
-For researchers who have deep expertise collecting data within a face-to-face lab or simply using a web browser, research using virtual meetings can be daunting. Yet, when viewed as a constellation of data streams, virtual meetings can be fairly straightforward. To help researchers ramp up efficiently, I am developing a [multi-part guide to aid in collecting research through Zoom](http://zoomgroupstats.org). In addition to detailing how to use `zoomGroupStats`, this guide offers best practices for configuring your Zoom subscription and a delineates a process to use when collecting data across many virtual meetings. Like with any research paradigm, investing time upfront to develop your virtual meeting process will pay dividends when it comes to analyzing data. *I highly recommend reviewing [this portion of the guide](http://zoomgroupstats.org/articles/part01-configure-zoom.html) before you begin collecting data.*
+For researchers who have deep expertise collecting data within a face-to-face lab or simply using a web browser, research using virtual meetings can be daunting. Yet, when viewed as a constellation of data streams, virtual meetings can be fairly straightforward. To help researchers ramp up efficiently, I am developing a [multi-part guide to aid in collecting research through Zoom](http://zoomgroupstats.org). In addition to detailing how to use `zoomGroupStats`, this guide offers best practices for configuring your Zoom subscription and a delineates a process to use when collecting data across many virtual meetings. 
+
+Like with any research paradigm, investing time upfront to develop your virtual meeting process will pay dividends when it comes to analyzing data. *I highly recommend reviewing [this portion of the guide](http://zoomgroupstats.org/articles/part01-configure-zoom.html) before you begin collecting data.*
 
 ## Installation
 
@@ -28,7 +32,7 @@ install.packages("zoomGroupStats")
 devtools::install_github("andrewpknight/zoomGroupStats")
 ```
 
-Finally, the `zoomGroupStats` package is an outgrwoth of a primitive set of functions that I created in April of 2020. If you were using those functions and would like to continue doing so, you can access them using: 
+Finally, the `zoomGroupStats` package is an outgrowth of a primitive set of functions that I created in April of 2020. If you were using those functions and would like to continue doing so, you can access them using: 
 
 ``` r
 source("http://apknight.org/zoomGroupStats_deprecated.R")
@@ -64,10 +68,10 @@ Measure the sentiment of the different text-based datasets that are in your Zoom
 
 ``` r 
 # Request sentiment analysis of transcribed audio 
-transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='utteranceLanguage')
+transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVars=c('batchMeetingId', 'utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='utteranceLanguage')
  
 # Request sentiment analysis of text-based chat
-transcriptSent = textSentiment(inputData=batchOutIds$chat, idVar=c('messageId'), textVar='message', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='messageLanguage')
+transcriptSent = textSentiment(inputData=batchOutIds$chat, idVars=c('batchMeetingId', 'messageId'), textVar='message', sentMethods=c('aws', 'syuzhet'), appendOut=TRUE, languageCodeVar='messageLanguage')
 ```
 
 ### Conduct conversation analysis

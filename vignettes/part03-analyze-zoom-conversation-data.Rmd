@@ -15,18 +15,97 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r setup}
+library(zoomGroupStats)
+```
 
-# Analyzing Data within `transcript` and `chat`
+```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='hide'}
+library(zoomGroupStats)
+batchOut = invisible(batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats')))
+```
 
-## Cleaning text-based data
+## Introduction
+
+Virtual meetings afford granular data on how people communicate with one another. With this granularity comes both opportunities and challenges. With respect to opportunities, researchers can use virtual meetings to track the flow and content of communications on a second-by-second basis. This enables deriving insights into who talks to whom and how different people may communicate with one another in distinct ways. 
+
+With respect to challenges, granular data often requires researchers--who may be used to smaller sample datasets--to contend with incredibly large volumes of information. For example, if a researcher were to collect data from 100 60-minute group meetings, this would yield 6000 minutes of recorded speech. Depending on the rate of speech, this could present 50,000 to 60,000 spoken utterances. 
+
+Because virtual meetings present data on events in time (e.g., a spoken sentence or chat message) made by an individual within a virtual meeting, they require close attention to levels of analysis. For many questions, researchers are not interested in the fine-grained events; rather, researchers are interested in using those fine-grained events to measure attributes of individuals or groups within certain segments of time. `zoomGroupStats` provides basic functionality to derive these kinds of aggregated metrics. Whether a given aggregation is appropriate for assessing some construct, however, will fundamentally depend on the phenomenon under investigation.
+
+`zoomGroupStats` provides functions for analyzing conversations that occur through two channels in a virtual meeting: 
+
+* **transcribed spoken language**: Zoom's cloud recording feature includes an option for transcription of language transmitted through meeting participants' microphones. This transcription is performed by otter.ai.   
+* **text-based chat messages**: During a Zoom meeting, users can send chat messages. In the chat file included in a Zoom Cloud recording, only publicly facing messages are captured. These are the messages that users send to the group as a whole. If users send one another direct/private messages, these are not captured in the downloadable file. 
+
+## Before analyzing conversations: Cleaning text-based data
+
+Text analysis is a dynamic area brimming with innovation. `zoomGroupStats` does not currently include direct functions for cleaning or modifying the text that is captured in either a transcript or a chat file. Because, however, the text for each of these files is stored in a variable, it is straightforward to use functions from other packages to clean or otherwise modify text before conducting conversation analysis. 
+
+Depending on your research questions and the scale of your dataset, you may wish to manually review and correct the transcribed audio content. Just like transcriptions done by humans, transcriptions produced by otter.ai will have errors. A manual review of a transcription can correct for these errors and provide a sharper analysis of text.  
+
+## About the Zoom `transcript` file
+
+If you have followed the steps outlined in [Part 2](http://zoomgroupstats.org/articles/part02-process-zoom-files.html), you will have a single list object from your batch analysis. Within this list you will find a `transcript` dataset. `transcript` is a data.frame that is the parsed audio transcript file. Each row represents a single marked "utterance" using Zoom's cloud-based transcription algorithm. Utterances are marked as a function of pauses in speech and/or speaker changes. 
+
+```{r, eval=TRUE}
+# Three records from the sample transcript dataset
+ head(batchOut$transcript, 3)
+```
+
+Each row contains identifying information for the utterance, including what meeting it was in (`batchMeetingId`) who said it (`userName`), when it was said (`utteranceStartTime`, `utteranceStartSeconds`), and how long it lasted (`utteranceTimeWindow`). There is also an indicator of the language for the utterance (`utteranceLanguage`). This indicator is used with some text analysis packages. 
+
+## About the Zoom `chat` file
+
+Also included in your batch output file will be a `chat` dataset. `chat` is a data.frame that is the parsed text-based chat file. Each row represents a single chat message submitted by a user. Note that non-ASCII characters will not be correctly rendered in the message text.
+
+```{r, eval=TRUE}
+# Three records from the sample transcript dataset
+ head(batchOut$chat, 3)
+```
+
+Like `transcript`, each row contains identifying information for the chat message, including what meeting it was in (`batchMeetingId`) who posted it (`userName`), and when it was posted (`messageTime`, `messageSeconds`). There is also an indicator of the language for the message (`messageLanguage`). 
+
+## Analyzing conversations in `transcript` and `chat`
+
+`zoomGroupStats` includes functions that aid in deriving common conversation metrics at several levels of analysis. Each of the functions can be applied to either the `chat` or the `transcript` file. 
 
 ## Performing sentiment analysis
 
-Using `textSentiment`
+Sentiment analysis--the assessment and/or classification of language according to its emotional tone--is among the most ubiquitous kinds of text analysis. `zoomGroupStats` provides the ability to perform sentiment analysis on the utterances or messages in `transcript` and `chat` files. Because this type of analysis scores pieces of text, I recommend conducting this analysis first. The sentiment metrics can then be included in downstream conversation analyses that aggregate aspects of the conversation to the individual or meeting levels. 
+
+Using the `textSentiment()` function, there are two different types of sentiment analysis that you can request:
+
+* **syuzhet** - This is a lexicon-based analysis using the `syuzhet` package. A lexicon-based analysis uses pre-existing dictionaries to measure the sentiment of individual words in a piece of text. In essence, this approach is a word-counting method. 
+* **aws** - This is an approach that relies on machine learning through Amazon Web Services. Rather than focusing on individual words, this method draws upon a trained model that assesses attributes of the text as a whole. To request this type of analysis, [you must have appropriately configured your AWS credentials](https://github.com/paws-r/paws/blob/main/docs/credentials.md). 
+
+In deciding which method to use, you should consider your research objectives. In general, the aws method will provide greater validity for assessing sentiment. However, it also will take longer to run and, for larger datasets, will incur financial costs. 
 
 ```{r, eval=FALSE}
- transcriptSent = textSentiment(inputData=batchOutIds$transcript, idVar=c('utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
+# You can request both sentiment analysis methods by including them in sentMethods
+ transcriptSent = textSentiment(inputData=batchOut$transcript, idVars=c('batchMeetingId','utteranceId'), textVar='utteranceMessage', sentMethods=c('aws', 'syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
+
+# This does only the aws sentiment analysis on a chat file
+ chatSent = textSentiment(inputData=batchOut$chat, idVars=c('batchMeetingId', 'messageId'), textVar='message', sentMethods=c('aws'), appendOut=FALSE, languageCodeVar='messageLanguage')
 ```
+
+The results of textSentiment come as a named list, with items for `aws` and/or `syuzhet`: 
+
+```{r, eval=TRUE}
+# This does only the syuzhet analysis on the transcript and appends does not append it to the input dataset
+ transcriptSent = textSentiment(inputData=batchOut$transcript, idVars=c('batchMeetingId','utteranceId'), textVar='utteranceMessage', sentMethods=c('syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
+
+head(transcriptSent$syuzhet)
+```
+
+The appendOut option in textSentiment gives you the ability to merge the sentiment metrics back to the original input data. I usually do this so that I can incorporate these metrics into downstream conversation analyses. 
+
+```{r, eval=TRUE}
+# This does only the syuzhet sentiment analysis on a chat file and appends it to the input dataset
+ chatSent = textSentiment(inputData=batchOut$chat, idVars=c('batchMeetingId', 'messageId'), textVar='message', sentMethods=c('syuzhet'), appendOut=TRUE, languageCodeVar='messageLanguage')
+  head(chatSent$syuzhet)
+```
+
+Note that I have not included the `aws` output in this vignette because it requires a call to a third-party service.
 
 ## Performing conversation analysis
 
@@ -35,6 +114,10 @@ Using `textConversationAnalysis`
 ```{r, eval=FALSE}
  convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
 ```
+
+## Performing turn taking analysis
+
+
 
 ## Performing windowed conversation analysis
 
