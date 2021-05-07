@@ -35,8 +35,8 @@ for chat use 'messageTime'}
 \item{windowSize}{integer value of the duration of the window in number of seconds}
 }
 \value{
-list with two data.frames. In the first, each row is a temporal window.
-In the second, each row is a user's metrics within a given temporal window.
+list with two data.frames. In the first (windowlevel), each row is a temporal window.
+In the second (speakerlevel), each row is a user's metrics within a given temporal window.
 }
 \description{
 Run a windowed analysis on either a Zoom transcript or chat

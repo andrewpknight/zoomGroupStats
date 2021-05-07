@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include=FALSE}
 library(zoomGroupStats)
 ```
 
@@ -32,18 +32,20 @@ With respect to challenges, granular data often requires researchers--who may be
 
 Because virtual meetings present data on events in time (e.g., a spoken sentence or chat message) made by an individual within a virtual meeting, they require close attention to levels of analysis. For many questions, researchers are not interested in the fine-grained events; rather, researchers are interested in using those fine-grained events to measure attributes of individuals or groups within certain segments of time. `zoomGroupStats` provides basic functionality to derive these kinds of aggregated metrics. Whether a given aggregation is appropriate for assessing some construct, however, will fundamentally depend on the phenomenon under investigation.
 
+## Overview of text-based data in Zoom
+
 `zoomGroupStats` provides functions for analyzing conversations that occur through two channels in a virtual meeting: 
 
 * **transcribed spoken language**: Zoom's cloud recording feature includes an option for transcription of language transmitted through meeting participants' microphones. This transcription is performed by otter.ai.   
 * **text-based chat messages**: During a Zoom meeting, users can send chat messages. In the chat file included in a Zoom Cloud recording, only publicly facing messages are captured. These are the messages that users send to the group as a whole. If users send one another direct/private messages, these are not captured in the downloadable file. 
 
-## Before analyzing conversations: Cleaning text-based data
+### Cleaning and modifying text-based data
 
 Text analysis is a dynamic area brimming with innovation. `zoomGroupStats` does not currently include direct functions for cleaning or modifying the text that is captured in either a transcript or a chat file. Because, however, the text for each of these files is stored in a variable, it is straightforward to use functions from other packages to clean or otherwise modify text before conducting conversation analysis. 
 
 Depending on your research questions and the scale of your dataset, you may wish to manually review and correct the transcribed audio content. Just like transcriptions done by humans, transcriptions produced by otter.ai will have errors. A manual review of a transcription can correct for these errors and provide a sharper analysis of text.  
 
-## About the Zoom `transcript` file
+### About the Zoom `transcript` file
 
 If you have followed the steps outlined in [Part 2](http://zoomgroupstats.org/articles/part02-process-zoom-files.html), you will have a single list object from your batch analysis. Within this list you will find a `transcript` dataset. `transcript` is a data.frame that is the parsed audio transcript file. Each row represents a single marked "utterance" using Zoom's cloud-based transcription algorithm. Utterances are marked as a function of pauses in speech and/or speaker changes. 
 
@@ -54,7 +56,7 @@ If you have followed the steps outlined in [Part 2](http://zoomgroupstats.org/ar
 
 Each row contains identifying information for the utterance, including what meeting it was in (`batchMeetingId`) who said it (`userName`), when it was said (`utteranceStartTime`, `utteranceStartSeconds`), and how long it lasted (`utteranceTimeWindow`). There is also an indicator of the language for the utterance (`utteranceLanguage`). This indicator is used with some text analysis packages. 
 
-## About the Zoom `chat` file
+### About the Zoom `chat` file
 
 Also included in your batch output file will be a `chat` dataset. `chat` is a data.frame that is the parsed text-based chat file. Each row represents a single chat message submitted by a user. Note that non-ASCII characters will not be correctly rendered in the message text.
 
@@ -69,7 +71,7 @@ Like `transcript`, each row contains identifying information for the chat messag
 
 `zoomGroupStats` includes functions that aid in deriving common conversation metrics at several levels of analysis. Each of the functions can be applied to either the `chat` or the `transcript` file. 
 
-## Performing sentiment analysis
+### Performing sentiment analysis
 
 Sentiment analysis--the assessment and/or classification of language according to its emotional tone--is among the most ubiquitous kinds of text analysis. `zoomGroupStats` provides the ability to perform sentiment analysis on the utterances or messages in `transcript` and `chat` files. Because this type of analysis scores pieces of text, I recommend conducting this analysis first. The sentiment metrics can then be included in downstream conversation analyses that aggregate aspects of the conversation to the individual or meeting levels. 
 
@@ -95,6 +97,7 @@ The results of textSentiment come as a named list, with items for `aws` and/or `
  transcriptSent = textSentiment(inputData=batchOut$transcript, idVars=c('batchMeetingId','utteranceId'), textVar='utteranceMessage', sentMethods=c('syuzhet'), appendOut=FALSE, languageCodeVar='utteranceLanguage')
 
 head(transcriptSent$syuzhet)
+
 ```
 
 The appendOut option in textSentiment gives you the ability to merge the sentiment metrics back to the original input data. I usually do this so that I can incorporate these metrics into downstream conversation analyses. 
@@ -107,22 +110,154 @@ The appendOut option in textSentiment gives you the ability to merge the sentime
 
 Note that I have not included the `aws` output in this vignette because it requires a call to a third-party service.
 
-## Performing conversation analysis
+### Performing conversation analysis
 
-Using `textConversationAnalysis`
+Conversation analysis entails using the exchanges of communications among meeting members to assess attributes of individuals, dyads, and groups. `zoomGroupStats` currently includes two basic kinds of conversation analysis. 
 
-```{r, eval=FALSE}
- convo.out = textConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws")
+The `textConversationAnalysis()` function will provide a descriptive assessment of either the `transcript` or the `chat` file. 
+
+```{r, eval=TRUE}
+# Analyze the transcript, without the sentiment metrics
+convoTrans = textConversationAnalysis(inputData=batchOut$transcript, inputType='transcript', meetingId='batchMeetingId', speakerId='userName')
 ```
 
-## Performing turn taking analysis
+`textConversationAnalysis()` provides a list with output at two levels of analysis--the meeting level (first item) and the speaker level (second item). These items are named according to the type of input that you have provided. 
 
+```{r, eval=TRUE}
+# This is output at the meeting level. (Note that the values across meetings are equivalent because the sample dataset is a replication of the same meeting multiple times.)
+head(convoTrans$transcriptlevel)
 
-
-## Performing windowed conversation analysis
-
-Using `windowedTextConversationAnalysis`
-
-```{r, eval=FALSE}
- win.convo.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, inputType='transcript', meetingId='batchMeetingId', speakerId='indivId', sentMethod="aws", timeVar="utteranceStartSeconds", windowSize=600)
 ```
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | The meeting identifier that you specified |
+| transcriptStartTime | When the first utterance was recorded |
+| transcriptEndTime | When the last utterance ended |
+| utteranceTimeWindow_sum | Total number of seconds of speaking time |
+| utteranceTimeWindow_x | Mean duration, in seconds, of utterances |
+| utteranceTimeWindow_sd | Standard deviation of the duration, in seconds, of utterances |
+| utteranceGap_x | Mean duration, in seconds, of silent time between consecutive utterances | 
+| utteranceGap_sd | Standard deviation of the duration, in seconds, of silent time between consecutive utterances | 
+| numUtterances | Count of the number of utterances in the meeting |
+| numUniqueSpeakers | Count of the number of unique speakers in the meeting. Note that this includes any utterances for which the speaker is UNIDENTIFIED. | 
+| silentTime_sum | Total number of seconds of silent time |
+| burstinessRaw | A measure of the concentration of utterances in time |
+
+
+```{r, eval=TRUE}
+# This is output at the speaker level
+head(convoTrans$speakerlevel)
+
+```
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | The meeting identifier that you specified |
+| userName | The speaker identifier that you specified | 
+| firstUtteranceTime | Timestamp for this person's first utterance | 
+| lastUtteranceTime | Timestamp for this person's last utterance | 
+| utteranceTimeWindow_sum | Total number of seconds of this person's speaking time |
+| utteranceTimeWindow_x | Mean duration, in seconds, of  this person's utterances |
+| utteranceTimeWindow_sd | Standard deviation of the duration, in seconds, of  this person's utterances |
+| utteranceGap_x | Mean duration, in seconds, of silent time before this person speaks after a prior utterance| 
+| utteranceGap_sd | Standard deviation of the duration, in seconds, of silent time before this person speaks after a prior utterance | 
+| numUtterances | Count of the number of utterances this person made in this the meeting |
+
+If you have already conducted a sentiment analysis using the `textSentiment()` function, you can further include those attributes. Note that currently you can only analyze one sentiment analysis method at a time. For example, here is a request for an analysis of the chat file: 
+
+```{r, eval=TRUE}
+# Analyze the conversation within the chat file, including the sentiment metrics
+convoChat = textConversationAnalysis(inputData=chatSent$syuzhet, inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="syuzhet")
+```
+
+The names of the items in the list output for `chat` are `chatlevel` and `userlevel`:
+
+```{r, eval=TRUE}
+# This is output at the meeting level
+head(convoChat$chatlevel)
+
+```
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | The meeting identifier that you specified |
+| chatStartTime | The time of the first chat message in this meeting | 
+| chatEndTime | The time of the last chat message in this meeting | 
+| messageNumChars_sum | Total number of characters chatted in meeting |
+| messageNumChars_x | Mean number of characters per message chatted in meeting |
+| messageNumChars_sd | Standard deviation of the number of characters per message chatted in meeting |
+| messageGap_x | Mean duration, in seconds, of time between chat messages in this meeting | 
+| messageGap_sd | Standard deviation of the duration, in seconds, of time between chat messages in this meeting | 
+| numUniqueMessagers | Number of individuals who sent chat messages in this meeting.
+| numMessages | Total number of messages sent in this meeting |
+| totalChatTime | Amount of time between first and last messages
+| burstinessRaw | Measure of the concentration of chat messages in time
+| ... | Additional variables depend on the type of sentiment analysis you may have requested. |
+
+
+```{r, eval=TRUE}
+# This is output at the speaker level
+head(convoChat$userlevel)
+
+```
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | The meeting identifier that you specified |
+| userName | The individual identifier you specified | 
+| firstMessageTime | The time of this person's first chat message in this meeting | 
+| lastMessageTime | The time of this person's last chat message in this meeting | 
+| messageNumChars_sum | Total number of characters this person chatted in meeting |
+| messageNumChars_x | Mean number of characters per message this person chatted in meeting |
+| messageNumChars_sd | Standard deviation of the number of characters per message this person chatted in meeting |
+| messageGap_x | Mean duration, in seconds, of time before this person sends a chat message after a prior message | 
+| messageGap_sd | Standard deviation of the duration, in seconds, of time before this person sends a chat message after a prior message | 
+| ... | Additional variables depend on the type of sentiment analysis you may have requested. |
+
+## Windowed conversation analysis
+
+One of the unique strengths of collecting data using virtual meetings is the ability to assess *dynamics*--how meeting characteristics and participants' behavior changes over time. Beyond analyzing the raw events over time, `zoomGroupStats` enables you to run the textConversationAnalysis above within temporal windows in a given meeting. By windowing, and aggregating data within the window, you can derive more reliable indicators of attributes than relying solely on the raw events. 
+
+For example, using the following function call, you could analyze how conversation attributes--who is speaking alot, what is the sentiment of speech--change throughout a meeting, in 5-minute (`windowSize=300` seconds) increments. 
+
+```{r, eval=TRUE}
+ win.convo.out = windowedTextConversationAnalysis(inputData=batchOut$transcript, inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="none", timeVar="utteranceStartSeconds", windowSize=300)
+```
+
+The output of `windowedTextConversationAnalysis` is a list with two data.frames as items: 
+
+```{r, eval=TRUE}
+# View the window-level output
+head(win.convo.out$windowlevel)
+
+```
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| windowId | Incrementing numeric identifier for the temporal window | 
+| windowStart | Number of seconds from start of transcript when this window begins |
+| windowEnd | Number of seconds from start of transcript when this window ends |
+| ... | All other variables correspond to the textConversationAnalysis output; but, they are calculated within a given temporal window | 
+
+
+```{r, eval=TRUE}
+# View the output for speakers within windows
+head(win.convo.out$speakerlevel)
+
+```
+
+This output will provide a record for each possible speaker within each possible window. This is done so that valid zeros (e.g., no speaking) are represented in the dataset. 
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | Meeting identifier requested | 
+| userName | Speaker identifier requested | 
+| windowId | Incrementing numeric identifier for the temporal window | 
+| windowStart | Number of seconds from start of transcript when this window begins |
+| windowEnd | Number of seconds from start of transcript when this window ends |
+| ... | All other variables correspond to the textConversationAnalysis output; but, they are calculated within a given temporal window | 
+
+## Next Steps
+
+In the [final part of this guide](http://zoomgroupstats.org/articles/part04-analyze-zoom-video-data.html), you will learn how to process and anlayze video files downloaded from Zoom sessions.
