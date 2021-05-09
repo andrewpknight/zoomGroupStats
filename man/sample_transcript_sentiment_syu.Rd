@@ -39,6 +39,6 @@ A data frame with 30 rows of 23 variables:
 sample_transcript_sentiment_syu
 }
 \description{
-Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.
+Parsed spoken language in a Zoom meeting with syuzhet-based sentiment analysis.
 }
 \keyword{datasets}
