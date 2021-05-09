@@ -14,18 +14,69 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Introduction to Analyzing Video from Zoom
+
+One of the most valuable raw outputs from Zoom is the video recording of the session. Indeed, the video recording is, itself, the source of the transcript [that we considered in Part 03](http://zoomgroupstats.org/articles/part03-analyze-zoom-conversation-data.html). But, beyond spoken language, video offers the potential to examine participants' nonverbal behavior and a wide range of actions and interactions during virtual meetings. As discussed in [Part 01](http://zoomgroupstats.org/articles/part01-configure-zoom.html), you should attend carefully to your Zoom configuration before beginning to collect data. My recommendation is to select all of the video options that are available and optimize your recordings for 3rd party processing. 
+
+If you do select all of the recording options, you will be able to download several files from Zoom after a virtual meeting is complete and the recording is available: 
+
+* A gallery view: This gives a tiled view of meeting participants who have their camera on. It is important to note that participants' placement on the screen (i.e., the location of their tiles) is dynamic and will change depending on who has a camera on in the meeting at any given point in time. 
+* An active speaker view: This displays the camera feed of a single participant at a time. The participant who is featured is the one that Zoom has classified as the active speaker at that moment. 
+* Shared screen views: There are a few different shared screen views. One gives the active speaker as a small thumbnail within a larger field showing the shared screen. 
+
+Depending on your research questions, different video formats will be most relevant. For my own research, which focuses on group dynamics, I prefer the gallery view. This enables measuring the nonverbal behavior of all participants throughout the entirety of a virtual meeting (assuming they have their camera on). 
+
+`zoomGroupStats` currently supports one video (named as *prefix*_video.mp4) where *prefix* is the file naming convention that you included in your [batch processing template](https://github.com/andrewpknight/zoomGroupStats/blob/main/inst/extdata/myMeetingsBatch.xlsx). That is, for each meeting, you can include in your batch processing folder a single video file. You may still find it valuable to download other views (e.g., active speaker)--just add a suffix to the filename. 
+
 ## Parsing Zoom Video feed
 
-Using `grabVideoStills`
+Analyzing videos is computationally and, consequently, time intensive. Think of a video as a series of still images that have been strung together--much like a flip book. When analyzing videos, we are breaking down a video into its still frames and, then, analyzing those still frames. Depending on the duration and quality (e.g., frame rate, size), there could be hundreds of thousands of images within your video. For example, if your video has a frame rate of 60 frames per second of footage, that would yield 3,600 frames for a single *minute* of video. 
+
+Given the time that it can take to analyze many videos, I "parse" or pre-process the video files from Zoom meetings before analyzing them. By "parse", I mean that I sample and save a sequence of still frames from each video that can be used in downstream analyses. This process is akin to how we parsed the transcript or chat files from Zoom meetings in [Part 03](http://zoomgroupstats.org/articles/part03-analyze-zoom-conversation-data.html). I usually do this at the start of a project and a time when I will not be using my computer (e.g., before going to sleep). When I launch the batch parsing function at night, it can run throughout the night while I am sleeping. 
+
+The `batchGrapVideoStills()` function presumes that you have followed the batch process setup described in [Part 02 of this guide](http://zoomgroupstats.org/articles/part02-process-zoom-files.html). If you have done this, you have a series of video files saved in the same directory as your batch input file. 
 
 ```{r, eval=FALSE}
-grabVideoStills(inputVideo='sample_gallery_video.mp4', sampleWindow=45, stillPath="")
+batchOut = batchProcessZoomOutput(batchInput="./myMeetingsBatch.xlsx")
 ```
+
+And, the function presumes that you have run the `batchProcessZoomOutput()` function to generate the `batchOut` object: 
+
+```{r, eval=FALSE, error=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='hide'}
+batchOut = invisible(batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats')))
+```
+
+With this setup complete, you can run the `batchGrabVideoStills` function: 
+
+```{r, eval=FALSE}
+batchGrabVideoStills(batchInfo=batchOut$batchInfo, sampleWindow=60)
+```
+
+This function call will iterate through the meetings in your batch and, for each meeting where there is a video, sample a still frame from the video every 60 seconds. Because of a quirk with video still frames, the function will actually sample the first image at `sampleWindow/2` and then each subsequent image every `sampleWindow`. The function saves these images in a new directory that it creates within the same directory where the videos are saved. 
+
+In addition to the images that it saves, `batchGrabVideoStills` will return a data frame with information about what it did for each meeting:
+
+| Variable | Description |
+|:---------------|:-----------------------------------------|
+| batchMeetingId | The meeting identifier |
+| videoExists | TRUE or FALSE indicating whether there was a video for this meeting |
+| sampleWindow | The window requested for sampling frames |
+| numFramesExtracted | The total number of image files that were saved for this meeting |
 
 ## Analyzing attributes of detected faces
 
-Using `videoFaceAnalysis`
+With the still frames sampled from the video, you can now progress to analyzing attributes of the video. The current version of `zoomGroupStats` includes one function--`batchVideoFaceAnalysis()``--for analyzing the attributes of faces detected within the video. This function relies on the Rekognition service from Amazon Web Services. To use this function, [you must have appropriately configured your AWS credentials](https://github.com/paws-r/paws/blob/main/docs/credentials.md).
 
 ```{r, eval=FALSE}
-vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")
+vidOut = batchVideoFaceAnalysis(batchInfo=batchOut$batchInfo, sampleWindow=60)
 ```
+
+This function will iterate through a set of meetings. For each meeting, it will iterate through the extracted images from the video of the meeting. Within each image, it will detect human faces and measure attributes of those faces using Rekognition. If you create an identified collection of users in advance, you can use this collection to detect the identity of any faces in the video. 
+
+The function returns a data.frame that is at the face-image level of analysis. That is, each record in the data.frame corresponds to a face detected within an image, which is itself nested within a given meeting. As an example, imagine that you have a recording of a 60 minute meeting for which you have extracted 60 still frames (e.g., one every minute). Imagine that there were 5 participants in this meeting and that the participants kept their camera on throughout the meeting. This should yield approximately 300 records of data. Note that there will likely be fewer records simply because participants might have stepped away from their camera or been unrecognizable at a given point in the video. 
+
+For each detected face, there is an abundance of information from AWS rekognition. There are estimates of participants' age and gender, facial attributes (e.g., glasses, facial hair), and estimates of emotional expressions. If you provided an AWS collection of identified images, the identity of the participant will also be included, along with a confidence level. 
+
+## Next Steps
+
+At this point in the guide, the next steps are on my end. You should expect the functionality of `zoomGroupStats` to continue to extend, as I build out new functions and make the existing functions more efficient. You should also expect this guide to extend. A subsequent topic that I will include, for example, is how to best analyze Zoom Recordings captured locally (i.e., not with the Zoom Cloud). If you have ideas or suggestions for functionality--or, if you have used the functions and encountered bugs or problems--[please reach out](mailto:knightap@wustl.edu). With many eyes, all bugs are shallow. 

@@ -7,6 +7,7 @@
 #' @param batchInfo the batchInfo data.frame that is output from batchProcessZoomOutput
 #' @param sampleWindow an integer indicating how frequently you have sampled images
 #'  in number of seconds. 
+#' @param facesCollectionID name of an AWS collection with identified faces
 #'
 #' @return data.frame with one record for every face detected in each frame across all meetings. For each face, there is an abundance of information from AWS rekognition. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment.
 #' @export
@@ -16,14 +17,14 @@
 #'   vidOut = batchVideoFaceAnalysis(batchInfo=zoomOut$batchInfo, 
 #'   sampleWindow = 300)
 #' }
-batchVideoFaceAnalysis = function(batchInfo, sampleWindow) {
+batchVideoFaceAnalysis = function(batchInfo, sampleWindow, facesCollectionID=NA) {
   for(m in 1:nrow(batchInfo)) {
     mInfo = batchInfo[m, ]
     message("Processing Meeting ",mInfo$batchMeetingId," ", "(",m," of ",nrow(batchInfo),")")
     videoExists = file.exists(file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video.mp4")))
     dirExists = dir.exists(file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video")))  
     if(dirExists) {
-      vidOut = videoFaceAnalysis(inputVideo=file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video.mp4")), recordingStartDateTime=mInfo$recordingStartDateTime, sampleWindow=sampleWindow, videoImageDirectory=file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video")))
+      vidOut = videoFaceAnalysis(inputVideo=file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video.mp4")), recordingStartDateTime=mInfo$recordingStartDateTime, sampleWindow=sampleWindow, facesCollectionID=facesCollectionID, videoImageDirectory=file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video")))
       vidOut$batchMeetingId = mInfo$batchMeetingId
       
       if(m == 1) {

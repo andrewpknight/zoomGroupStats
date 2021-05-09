@@ -15,11 +15,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, include=FALSE}
-library(zoomGroupStats)
-```
 
-```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='hide'}
+```{r, error=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='hide'}
 library(zoomGroupStats)
 batchOut = invisible(batchProcessZoomOutput(batchInput=system.file('extdata', 'myMeetingsBatch.xlsx', package = 'zoomGroupStats')))
 ```

@@ -30,7 +30,6 @@ Before launching data collection, create and produce documentation of a standard
 1. [Sample video guide for recording the meeting itself](https://youtu.be/HbbKcmbaLYI)
 
 ## Maximize degrees of freedom
-
 When configuring your Zoom subscription and preparing to record virtual meetings, I recommend providing yourself the most flexibility upfront. You can always subset and focus on some elements downstream. But, if you don't capture something upfront, you'll lose those options downstream. In particular: 
 
 1. If using cloud-based recording, select all possible recording options (of different views). This gives you the ability to make selective decisions after you've run the meeting.

@@ -99,5 +99,9 @@ win.text.out = windowedTextConversationAnalysis(inputData=transcriptSent$aws, in
 Measure characteristics of the video feeds in a downloaded Zoom video file. This function currently focuses just on facial expressions. It requires either `magick` or `ffmpeg` to process the video file. And, it requires appropriately configured AWS credentials to analyze faces in the video. With these prerequisites, you can detect known individuals in a video and extract facial characteristics (e.g., emotional expressions).
 
 ``` r 
-vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", recordingStartDateTime="2020-04-20 13:30:00", sampleWindow=30, facesCollectionID="group-r")
+# First, break the videos down into image files: 
+batchGrabVideoStills(batchInfo=batchOut$batchInfo, sampleWindow=60)
+
+# Then, analyze the facial expressions, including an identified face collection
+vid.out = batchVideoFaceAnalysis(batchOut$batchInfo, sampleWindow=60, facesCollectionID="myMeeting-r")
 ```
