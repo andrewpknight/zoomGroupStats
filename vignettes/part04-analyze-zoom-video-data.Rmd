@@ -1,6 +1,7 @@
 ---
 title: "Part 4: Analyzing Video Data from Zoom"
-output: rmarkdown::html_vignette
+author: "Andrew P. Knight"
+date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Part 4: Analyzing Video Data from Zoom}
   %\VignetteEngine{knitr::rmarkdown}
