@@ -3,7 +3,7 @@
 \docType{data}
 \name{sample_transcript_sentiment_syu}
 \alias{sample_transcript_sentiment_syu}
-\title{Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.}
+\title{Parsed spoken language in a Zoom meeting with syuzhet-based sentiment analysis.}
 \format{
 A data frame with 30 rows of 23 variables:
 \describe{

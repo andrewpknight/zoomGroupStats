@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 In the second part of this guide, you will learn how to turn downloadable files from Zoom recordings into datasets that you can analyze in `R` using `zoomGroupStats`. Again, because `zoomGroupStats` relies on [Zoom Cloud recording](https://support.zoom.us/hc/en-us/articles/203741855) features, this guide will focus specifically on the files that you download from the Zoom Cloud. However, the functions in `zoomGroupStats` can also be used on meetings that you record locally. 
 
-This guide will progress from instructions on which files to download from Zoom to how to convert those files into useable datasets. In its most basic form, a research dataset using virtual meetings can be structured as individual meeting participants who are nested within virtual meetings. Individual participants can attend multiple virtual meetings; indeed, individual participants *could* attend multiple virtual meetings at the same time. Individuals can further be members of multiple other organizational units (e.g., groups, teams, departments, organizations). To build a basic, clean dataset, though, what you must know is which individual human being was logged into which virtual meeting.  
+This guide will progress from instructions on which files to download from Zoom to how to convert those files into usable datasets. In its most basic form, a research dataset using virtual meetings can be structured as individual meeting participants who are nested within virtual meetings. Individual participants can attend multiple virtual meetings; indeed, individual participants *could* attend multiple virtual meetings at the same time. Individuals can further be members of multiple other organizational units (e.g., groups, teams, departments, organizations). To build a basic, clean dataset, though, what you must know is which individual human being was logged into which virtual meeting.  
 
 ## How to Download Files from Zoom
 
@@ -129,7 +129,7 @@ The output, stored in this example in `batchOut`, will be a multi-item list that
 
 ### batchInfo
 
-This is information about the batch, drawn from the input batch file that you have supplied. It is heplful to have this information stored for later analysis of the different components of a Zoom recording. 
+This is information about the batch, drawn from the input batch file that you have supplied. It is helpful to have this information stored for later analysis of the different components of a Zoom recording. 
 
 ```{r}
 str(batchOut$batchInfo)
@@ -169,7 +169,7 @@ str(batchOut$chat)
 ```
 
 ### rosetta
-The final element is called "rosetta" because it will help you deal with one of the most vexxing challenges in analyzing virtual meetings with a large number of participants: The lack of a persistent and unique individual identifier for participants. Because the transcript and chat files rely on people's Zoom display names--and because people can change their display names--you will frequently encounter duplicate names and/or multiple identifiers for the same person. 
+The final element is called "rosetta" because it will help you deal with one of the most vexing challenges in analyzing virtual meetings with a large number of participants: The lack of a persistent and unique individual identifier for participants. Because the transcript and chat files rely on people's Zoom display names--and because people can change their display names--you will frequently encounter duplicate names and/or multiple identifiers for the same person. 
 
 From a data structure perspective, what is most important to know is which individual person logged into which virtual meeting. Unfortunately, complications in how Zoom identifies individuals require careful human attention to this issue. To illustrate, consider the following exaggerated example. Arun Jah is an attendee in Meeting A. Arun logs in on his laptop through his corporate account. But, he also logs in on his iPad through his family account to the same meeting. After a few minutes, Arun realizes that his iPad account has his child's name displayed (the child was using it for virtual school). So, he changes his display name. Halfway through the meeting, Arun needs to get in his car to go pick up his child. So, he logs into the meeting on his smartphone. In a raw Zoom dataset, the person "Arun" will show up as four different names--(1) his corporate name that was not changed; (2) his child's name on his iPad; (3) the name he changed his iPad to; and, (4) his mobile phone. Clearly, to properly study human behavior, all of the actions associated with these four names should be attached to "Arun". 
 

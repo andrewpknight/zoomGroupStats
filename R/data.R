@@ -43,7 +43,7 @@
 #' @source \url{http://apknight.org/}
 "sample_transcript_sentiment_aws"
 
-#' Parsed spoken language in a Zoom meeting with zyuzhet-based sentiment analysis.
+#' Parsed spoken language in a Zoom meeting with syuzhet-based sentiment analysis.
 #' 
 #' @format A data frame with 30 rows of 23 variables: 
 #' \describe{
