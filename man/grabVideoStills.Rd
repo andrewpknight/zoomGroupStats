@@ -4,16 +4,22 @@
 \alias{grabVideoStills}
 \title{Helper function to split a video into still frames}
 \usage{
-grabVideoStills(inputVideo, sampleWindow, tryffmpeg = TRUE)
+grabVideoStills(
+  inputVideo,
+  imageDir = NULL,
+  overWriteDir = FALSE,
+  sampleWindow
+)
 }
 \arguments{
 \item{inputVideo}{full filepath to a video file}
 
+\item{imageDir}{the directory where you want the function to write the extracted image files}
+
+\item{overWriteDir}{logical indicating whether you want to overwrite imageDir if it exists}
+
 \item{sampleWindow}{an integer indicating how frequently you want to sample
 images in number of seconds.}
-
-\item{tryffmpeg}{boolean indicating whether you want it to try to use ffmpeg,
-which tends to be much faster than magick for splitting frames}
 }
 \value{
 a data.frame that gives information about the still frames. Each record is
@@ -24,13 +30,15 @@ a stillframe, with the following info:
 }
 }
 \description{
-This function currently relies on either magick or
+This function currently relies on the av package and
 ffmpeg to split a video file into images. This function will save
-the images locally in the same directory where the video is located.
+the images to the directory specified by the user.
 }
 \examples{
+vidOut = grabVideoStills(inputVideo=system.file('extdata', "meeting001_video.mp4", 
+package = 'zoomGroupStats'), imageDir=tempdir(), overWriteDir=TRUE, sampleWindow=2)
 \dontrun{
 grabVideoStills(inputVideo='myMeeting.mp4', 
-sampleWindow=45)
+imageDir="~/Documents/myMeetings/videoImages", overWriteDir=TRUE,  sampleWindow=45)
 }
 }

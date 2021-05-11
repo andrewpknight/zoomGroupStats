@@ -9,7 +9,9 @@ videoFaceAnalysis(
   recordingStartDateTime,
   sampleWindow,
   facesCollectionID = NA,
-  videoImageDirectory = NULL
+  videoImageDirectory = NULL,
+  grabVideoStills = FALSE,
+  overWriteDir = FALSE
 )
 }
 \arguments{
@@ -19,12 +21,16 @@ videoFaceAnalysis(
 
 \item{sampleWindow}{Frame rate for the analysis}
 
-\item{facesCollectionID}{name of an AWS collection with identified faces}
+\item{facesCollectionID}{name of an 'AWS' collection with identified faces}
 
-\item{videoImageDirectory}{path to a directory containing pre-split images. This will skip the splitting of an image file, but it presumes that images were pre-split using grabVideoStills}
+\item{videoImageDirectory}{path to a directory that either contains image files or where you want to save image files}
+
+\item{grabVideoStills}{logical indicating whether you want the function to split the video file or not}
+
+\item{overWriteDir}{logical indicating whether to overwrite videoImageDirectory if it exists}
 }
 \value{
-data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from AWS rekognition. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment.
+data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from 'AWS Rekognition'. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment.
 }
 \description{
 Using this function you can analyze attributes of facial expressions within
@@ -36,8 +42,10 @@ images have been pre-saved.
 }
 \examples{
 \dontrun{
-vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", 
+vid.out = videoFaceAnalysis(inputVideo="meeting001_video.mp4", 
 recordingStartDateTime="2020-04-20 13:30:00", 
-sampleWindow=30, facesCollectionID="group-r")
+sampleWindow=1, facesCollectionID="group-r",
+videoImageDirectory="~/Documents/meetingImages", 
+grabVideoStills=FALSE, overWriteDir=FALSE)
 }
 }

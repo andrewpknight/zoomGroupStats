@@ -3,12 +3,12 @@
 \docType{data}
 \name{sample_transcript_processed}
 \alias{sample_transcript_processed}
-\title{Parsed spoken language in a Zoom meeting.}
+\title{Parsed spoken language in a 'Zoom' meeting.}
 \format{
 A data frame with 30 rows of 12 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
-\item{userName}{Zoom display name attached to this speaker}
+\item{userName}{'Zoom' display name attached to this speaker}
 \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
 \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 \item{utteranceStartTime}{timestamp for the start of the utterance}
@@ -22,12 +22,12 @@ A data frame with 30 rows of 12 variables:
 }
 }
 \source{
-\url{http://apknight.org/}
+\url{http://zoomgroupstats.org/}
 }
 \usage{
 sample_transcript_processed
 }
 \description{
-Parsed spoken language in a Zoom meeting.
+Parsed spoken language in a 'Zoom' meeting.
 }
 \keyword{datasets}

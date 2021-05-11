@@ -50,7 +50,7 @@ batchOut = invisible(batchProcessZoomOutput(batchInput=system.file('extdata', 'm
 With this setup complete, you can run the `batchGrabVideoStills` function: 
 
 ```{r, eval=FALSE}
-batchGrabVideoStills(batchInfo=batchOut$batchInfo, sampleWindow=60)
+batchGrabVideoStills(batchInfo=batchOut$batchInfo, imageDir="~/Documents/myMeetings/videoImages", sampleWindow=60)
 ```
 
 This function call will iterate through the meetings in your batch and, for each meeting where there is a video, sample a still frame from the video every 60 seconds. Because of a quirk with video still frames, the function will actually sample the first image at `sampleWindow/2` and then each subsequent image every `sampleWindow`. The function saves these images in a new directory that it creates within the same directory where the videos are saved. 
@@ -61,6 +61,7 @@ In addition to the images that it saves, `batchGrabVideoStills` will return a da
 |:---------------|:-----------------------------------------|
 | batchMeetingId | The meeting identifier |
 | videoExists | TRUE or FALSE indicating whether there was a video for this meeting |
+| imageDir |path to the directory where video images are saved |
 | sampleWindow | The window requested for sampling frames |
 | numFramesExtracted | The total number of image files that were saved for this meeting |
 
@@ -69,7 +70,7 @@ In addition to the images that it saves, `batchGrabVideoStills` will return a da
 With the still frames sampled from the video, you can now progress to analyzing attributes of the video. The current version of `zoomGroupStats` includes one function--`batchVideoFaceAnalysis()``--for analyzing the attributes of faces detected within the video. This function relies on the Rekognition service from Amazon Web Services. To use this function, [you must have appropriately configured your AWS credentials](https://github.com/paws-r/paws/blob/main/docs/credentials.md).
 
 ```{r, eval=FALSE}
-vidOut = batchVideoFaceAnalysis(batchInfo=batchOut$batchInfo, sampleWindow=60)
+vidOut = batchVideoFaceAnalysis(batchInfo=batchOut$batchInfo, imageDir="~/Documents/meetingImages", sampleWindow=60, facesCollectionID="group-r")
 ```
 
 This function will iterate through a set of meetings. For each meeting, it will iterate through the extracted images from the video of the meeting. Within each image, it will detect human faces and measure attributes of those faces using Rekognition. If you create an identified collection of users in advance, you can use this collection to detect the identity of any faces in the video. 

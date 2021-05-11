@@ -2,10 +2,7 @@
 % Please edit documentation in R/importZoomRosetta.R
 \name{importZoomRosetta}
 \alias{importZoomRosetta}
-\title{Helper function to add unique identifiers to processed Zoom downloads
-Import an edited zoomRosetta file that tells how to
-link up Zoom display names to some unique individual
-identifier}
+\title{Helper function to add unique identifiers to processed Zoom downloads}
 \usage{
 importZoomRosetta(zoomOutput, zoomRosetta, meetingId)
 }
@@ -21,14 +18,20 @@ returns zoomOutput with identifiers in zoomRosetta
 merged to any available data.frames in the zoomOutput file
 }
 \description{
-Helper function to add unique identifiers to processed Zoom downloads
 Import an edited zoomRosetta file that tells how to
 link up Zoom display names to some unique individual
 identifier
 }
 \examples{
+batchOutIds = importZoomRosetta(zoomOutput=
+batchProcessZoomOutput(batchInput=system.file('extdata', 
+'myMeetingsBatch.xlsx', package = 'zoomGroupStats')), 
+zoomRosetta=system.file('extdata', 
+'myMeetingsBatch_rosetta_edited.xlsx', package = 'zoomGroupStats'), 
+meetingId="batchMeetingId")
+
 \dontrun{
-importZoomRosetta(zoomOutput=batchOut, zoomRosetta="myEditedRosetta.xlsx", 
+batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="myEditedRosetta.xlsx", 
 meetingId="batchMeetingId")
 }
 }

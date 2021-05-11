@@ -27,6 +27,6 @@ Name of user, user email, total duration, and guest.
 }
 \examples{
 partInfo = processZoomParticipantsInfo(
-system.file('extdata', "sample_participants.csv", package = 'zoomGroupStats')
+system.file('extdata', "meeting001_participants.csv", package = 'zoomGroupStats')
 )
 }

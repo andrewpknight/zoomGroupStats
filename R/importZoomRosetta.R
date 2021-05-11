@@ -1,5 +1,5 @@
 #' Helper function to add unique identifiers to processed Zoom downloads
-
+#' 
 #' Import an edited zoomRosetta file that tells how to 
 #' link up Zoom display names to some unique individual
 #' identifier
@@ -13,8 +13,15 @@
 #' @export
 #'
 #' @examples
+#' batchOutIds = importZoomRosetta(zoomOutput=
+#' batchProcessZoomOutput(batchInput=system.file('extdata', 
+#' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats')), 
+#' zoomRosetta=system.file('extdata', 
+#' 'myMeetingsBatch_rosetta_edited.xlsx', package = 'zoomGroupStats'), 
+#' meetingId="batchMeetingId")
+#' 
 #' \dontrun{
-#' importZoomRosetta(zoomOutput=batchOut, zoomRosetta="myEditedRosetta.xlsx", 
+#' batchOutIds = importZoomRosetta(zoomOutput=batchOut, zoomRosetta="myEditedRosetta.xlsx", 
 #' meetingId="batchMeetingId")
 #' }
 importZoomRosetta = function(zoomOutput, zoomRosetta, meetingId) {

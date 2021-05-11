@@ -3,13 +3,13 @@
 \docType{data}
 \name{sample_transcript_sentiment_aws}
 \alias{sample_transcript_sentiment_aws}
-\title{Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.}
+\title{Parsed spoken language in a 'Zoom' meeting with AWS-based sentiment analysis.}
 \format{
 A data frame with 30 rows of 17 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
 \item{utteranceId}{an incremented numeric identifier for a marked speech utterance}
-\item{userName}{Zoom display name attached to this speaker}
+\item{userName}{'Zoom' display name attached to this speaker}
 \item{utteranceStartSeconds}{when the utterance started as the number of seconds from the start of the recording}
 \item{utteranceStartTime}{timestamp for the start of the utterance}
 \item{utteranceEndSeconds}{when the utterance ended as the number of seconds from the start of the recording}
@@ -27,12 +27,12 @@ A data frame with 30 rows of 17 variables:
 }
 }
 \source{
-\url{http://apknight.org/}
+\url{http://zoomgroupstats.org/}
 }
 \usage{
 sample_transcript_sentiment_aws
 }
 \description{
-Parsed spoken language in a Zoom meeting with AWS-based sentiment analysis.
+Parsed spoken language in a 'Zoom' meeting with AWS-based sentiment analysis.
 }
 \keyword{datasets}

@@ -23,6 +23,8 @@ that can be helpful in manually adding a new unique identifier to use in
 further data anlaysis.
 }
 \examples{
+rosetta.out = createZoomRosetta(processZoomOutput(fileRoot=
+file.path(system.file('extdata', package = 'zoomGroupStats'),"meeting001")))
 \dontrun{
 rosetta.out = createZoomRosetta(processZoomOutput(fileRoot="~/zoomMeetings/meeting001"))
 }

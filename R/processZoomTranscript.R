@@ -24,7 +24,7 @@
 #'
 #' @examples
 #' tr.out = processZoomTranscript(
-#' fname=system.file('extdata', 'sample_transcript.vtt', package = 'zoomGroupStats'), 
+#' fname=system.file('extdata', 'meeting001_transcript.vtt', package = 'zoomGroupStats'), 
 #' recordingStartDateTime = '2020-04-20 13:30:00', languageCode = 'en')
 processZoomTranscript = function(fname, recordingStartDateTime="1970-01-01 00:00:00", languageCode="en") {
   

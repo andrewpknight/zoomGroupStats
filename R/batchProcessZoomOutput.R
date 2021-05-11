@@ -34,7 +34,8 @@
 #'
 #' @examples
 #' batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 
-#' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
+#' 'myMeetingsBatch.xlsx', package = 'zoomGroupStats'), 
+#' exportZoomRosetta=file.path(tempdir(),"_rosetta.xlsx"))
 #' 
 batchProcessZoomOutput = function(batchInput, exportZoomRosetta=NULL) {
   

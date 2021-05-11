@@ -1,5 +1,5 @@
 test_that("Transcript parsing yields correct records", {
-  tr.out = processZoomTranscript(fname=system.file('extdata', "sample_transcript.vtt", package = 'zoomGroupStats'), recordingStartDateTime = '2020-04-20 13:30:00',languageCode = 'en')
+  tr.out = processZoomTranscript(fname=system.file('extdata', "meeting001_transcript.vtt", package = 'zoomGroupStats'), recordingStartDateTime = '2020-04-20 13:30:00',languageCode = 'en')
   
   expect_equal(nrow(tr.out), 300)
   expect_equal(length(unique(tr.out$userName)), 6)

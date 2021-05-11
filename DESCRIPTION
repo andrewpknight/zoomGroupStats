@@ -1,5 +1,5 @@
 Package: zoomGroupStats
-Title: Analyze Text, Audio, and Video from Zoom Meetings
+Title: Analyze Text, Audio, and Video from 'Zoom' Meetings
 Version: 0.1.0
 Authors@R: 
     person(given = "Andrew",
@@ -7,13 +7,14 @@ Authors@R:
            role = c("aut", "cre"),
            email = "knightap@wustl.edu")
 URL: http://zoomgroupstats.org
-Description: Provides utilities for processing and analyzing the files that are exported from a recorded Zoom Meeting. This includes analyzing data captured through video cameras and microphones, the text-based chat, and meta-data. You can analyze aspects of the conversation among meeting participants and their emotional expressions throughout the meeting.
+Description: Provides utilities for processing and analyzing the files that are exported from a recorded 'Zoom' Meeting. This includes analyzing data captured through video cameras and microphones, the text-based chat, and meta-data. You can analyze aspects of the conversation among meeting participants and their emotional expressions throughout the meeting.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
+    av,
     data.table,
     dplyr,
     lubridate,

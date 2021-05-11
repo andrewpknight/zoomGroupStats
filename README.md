@@ -100,8 +100,8 @@ Measure characteristics of the video feeds in a downloaded Zoom video file. This
 
 ``` r 
 # First, break the videos down into image files: 
-batchGrabVideoStills(batchInfo=batchOut$batchInfo, sampleWindow=60)
+batchGrabVideoStills(batchInfo=batchOut$batchInfo, imageDir="~/Documents/myMeetings/videoImages", sampleWindow=60)
 
 # Then, analyze the facial expressions, including an identified face collection
-vid.out = batchVideoFaceAnalysis(batchOut$batchInfo, sampleWindow=60, facesCollectionID="myMeeting-r")
+vidOut = batchVideoFaceAnalysis(batchInfo=batchOut$batchInfo, imageDir="~/Documents/myMeetings/videoImages", sampleWindow=60, facesCollectionID="group-r")
 ```

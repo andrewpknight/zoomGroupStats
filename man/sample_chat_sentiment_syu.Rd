@@ -3,13 +3,13 @@
 \docType{data}
 \name{sample_chat_sentiment_syu}
 \alias{sample_chat_sentiment_syu}
-\title{Parsed chat file in a Zoom meeting with sentiment analysis using syuzhet}
+\title{Parsed chat file in a 'Zoom' meeting with sentiment analysis using syuzhet}
 \format{
 A data frame with 30 rows of 30 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
 \item{messageId}{an incremented numeric identifier for a marked chat message}
-\item{userName}{Zoom display name attached to the messager}
+\item{userName}{'Zoom' display name attached to the messager}
 \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 \item{messageTime}{timestamp for message}
 \item{message}{text of the message}
@@ -30,12 +30,12 @@ A data frame with 30 rows of 30 variables:
 }
 }
 \source{
-\url{http://apknight.org/}
+\url{http://zoomgroupstats.org/}
 }
 \usage{
 sample_chat_sentiment_syu
 }
 \description{
-Parsed chat file in a Zoom meeting with sentiment analysis using syuzhet
+Parsed chat file in a 'Zoom' meeting with sentiment analysis using syuzhet
 }
 \keyword{datasets}

@@ -28,6 +28,10 @@
 #' inputType='transcript', meetingId='batchMeetingId', 
 #' speakerId='userName')
 #' 
+#' turn.out = turnTaking(inputData=sample_chat_processed, 
+#' inputType='chat', meetingId='batchMeetingId', 
+#' speakerId='userName')
+#' 
 turnTaking = function(inputData, inputType, meetingId, speakerId) {
   
   turnGap<-sd<-speakerCurrent<-speakerBefore<-numTurns<-turnGap_x<-NULL

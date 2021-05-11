@@ -42,8 +42,16 @@ However you authenticate for AWS, you should do so before running calling the fu
 with this option in sentMethods
 }
 \examples{
+sent.out = textSentiment(inputData=sample_chat_processed,
+idVars=c('batchMeetingId', 'messageId'), 
+textVar='message', sentMethods='syuzhet',appendOut=TRUE,
+languageCodeVar='messageLanguage')
+
+\dontrun{
 sent.out = textSentiment(inputData=sample_transcript_processed, 
 idVars=c('batchMeetingId','utteranceId'), 
-textVar='utteranceMessage', sentMethods='syuzhet', 
-appendOut=FALSE, languageCodeVar='utteranceLanguage')
+textVar='utteranceMessage', sentMethods=c('aws','syuzhet'), 
+appendOut=TRUE, languageCodeVar='utteranceLanguage')
+}
+
 }

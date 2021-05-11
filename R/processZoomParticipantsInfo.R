@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' partInfo = processZoomParticipantsInfo(
-#' system.file('extdata', "sample_participants.csv", package = 'zoomGroupStats')
+#' system.file('extdata', "meeting001_participants.csv", package = 'zoomGroupStats')
 #' )
 processZoomParticipantsInfo = function(inputPath) {
   

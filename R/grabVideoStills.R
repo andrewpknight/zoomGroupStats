@@ -1,13 +1,14 @@
 #' Helper function to split a video into still frames
 #' 
-#' This function currently relies on either magick or 
+#' This function currently relies on the av package and 
 #' ffmpeg to split a video file into images. This function will save 
-#' the images locally in the same directory where the video is located.
+#' the images to the directory specified by the user.
+#' 
 #' @param inputVideo full filepath to a video file
+#' @param imageDir the directory where you want the function to write the extracted image files
+#' @param overWriteDir logical indicating whether you want to overwrite imageDir if it exists
 #' @param sampleWindow an integer indicating how frequently you want to sample
 #' images in number of seconds. 
-#' @param tryffmpeg boolean indicating whether you want it to try to use ffmpeg, 
-#' which tends to be much faster than magick for splitting frames
 #'
 #' @return a data.frame that gives information about the still frames. Each record is 
 #' a stillframe, with the following info: 
@@ -18,50 +19,47 @@
 #' @export
 #'
 #' @examples
+#' vidOut = grabVideoStills(inputVideo=system.file('extdata', "meeting001_video.mp4", 
+#' package = 'zoomGroupStats'), imageDir=tempdir(), overWriteDir=TRUE, sampleWindow=2)
 #' \dontrun{
 #' grabVideoStills(inputVideo='myMeeting.mp4', 
-#' sampleWindow=45)
+#' imageDir="~/Documents/myMeetings/videoImages", overWriteDir=TRUE,  sampleWindow=45)
 #' }
-grabVideoStills = function(inputVideo, sampleWindow, tryffmpeg=TRUE) {
-
+grabVideoStills = function(inputVideo, imageDir=NULL, overWriteDir=FALSE, sampleWindow) {
+  
+  if(is.null(imageDir) || !dir.exists(imageDir)) {
+    stop("You must provide a value for imageDir so that the function knows where to write the images extracted from the video.")
+  }
+  
   # Get the full path of inputVideo
-  inname = tools::file_path_sans_ext(inputVideo)
-  outpath = file.path(inname, "%05d.png")
-
-  # Create the new directory or press forward and overwrite? 
-  if(dir.exists(file.path(inname))) {
-    choice = utils::select.list(c("Yes", "No"), title=paste("The ",outpath, " directory already exists. Do you want to delete the old directory and files and create a new one?", sep=""))
-
-  if(choice %in% c("Yes", 1)) {
-      message("OK - This will delete the existing directory and files for ",basename(inputVideo), " in ",dirname(inputVideo), ".")
-      unlink(file.path(inname), recursive=TRUE)
-  } else {
-
-    stop("Did not process the video because doing so could overwrite the contents of this directory.")
-  }     
+  inname = basename(tools::file_path_sans_ext(inputVideo))
+  outDir = file.path(imageDir, inname)
+  outpath = file.path(outDir, "image_%6d.png")
+  
+  if(dir.exists(file.path(outDir)) && overWriteDir) {
+    unlink(outDir, recursive = TRUE) 
+  }
+  
+  if(!dir.exists(file.path(imageDir))) {
+    stop("You did not provide a valid path for the image directory.")
   } 
-
-  dir.create(inname)  
-
+  
   haveffmpeg = tryCatch(system("ffmpeg -hide_banner -loglevel quiet -version", intern=T), error=function(err) NA)
-
-  if(!is.na(haveffmpeg[1]) && tryffmpeg) {
-
-# ffCmd = paste("ffmpeg -i ", inputVideo, " -r 1/",sampleWindow, " ", outpath, " -hide_banner -nostdin -loglevel error", sep="")
-  ffCmd = paste("ffmpeg -i ", inputVideo, " -vf fps=1.0/",sampleWindow, " ", outpath, " -hide_banner -nostdin -loglevel error", sep="")   
-    message("Processing ", basename(inputVideo), " using ffmpeg. Note that processing videos can be time intensive for long duration videos.")
-    o = system(ffCmd, intern=T)       
+  
+  if(!is.na(haveffmpeg[1])) {
+    avOut = av::av_video_images(inputVideo, destdir=outDir, fps=1.0/sampleWindow, format="png")
+    message("Processing ", basename(inputVideo), " using the av package. Note that processing videos can be time intensive for long duration videos.")
   } else {
-    message("Processing ", basename(inputVideo), " using magick. Note that processing videos can be time intensive for long duration videos. In particular, magick is far slower than ffmpeg. If you install ffmpeg, these functions will run more quickly.")   
-  imagesFromVideo = magick::image_read_video(inputVideo, fps=(1/sampleWindow), format="png")
-  for(i in 1:length(imagesFromVideo)) {
-    outpath = file.path(inname, sprintf("%05d.png", i))
-    magick::image_write(imagesFromVideo[i], path=outpath)
+    stop("No videos can be processed because you do not have a working version of ffmpeg. Please check your installation of ffmpeg.")   
   } 
-  } 
-
+  
   # How many images were actually created?
-  imageNames = list.files(path=inname, pattern="*.png", full.names=T)  
-    return(imageNames)
+  if(length(avOut) > 1) {
+    imageSeconds = c(sampleWindow/2, sampleWindow/2+(1:(length(avOut)-1))*sampleWindow)  	
+  } else {
+    imageSeconds = sampleWindow/2
+  }
+  
+  imageInfo = data.frame(imageSeconds=imageSeconds, imageName=avOut)
+  return(imageInfo)
 }
-

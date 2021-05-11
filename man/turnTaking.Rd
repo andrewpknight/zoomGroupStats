@@ -39,4 +39,8 @@ turn.out = turnTaking(inputData=sample_transcript_processed,
 inputType='transcript', meetingId='batchMeetingId', 
 speakerId='userName')
 
+turn.out = turnTaking(inputData=sample_chat_processed, 
+inputType='chat', meetingId='batchMeetingId', 
+speakerId='userName')
+
 }

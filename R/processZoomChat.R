@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' ch.out = processZoomChat(
-#' fname=system.file('extdata', "sample_chat.txt", package = 'zoomGroupStats'), 
+#' fname=system.file('extdata', "meeting001_chat.txt", package = 'zoomGroupStats'), 
 #' sessionStartDateTime = '2020-04-20 13:30:00', 
 #' languageCode = 'en')
 processZoomChat = function(fname, sessionStartDateTime="1970-01-01 00:00:00", languageCode="en") {

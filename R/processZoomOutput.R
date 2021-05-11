@@ -1,4 +1,5 @@
 #' Wrapper function to process the raw files from Zoom in a single call
+#' 
 #' The user provides a fileRoot that is used for a given meeting. Output 
 #' files should be named as fileRoot_chat.txt; fileRoot_transcript.vtt; 
 #' and fileRoot_participants.csv. Any relevant files will be processed.
@@ -26,6 +27,9 @@
 #' @export
 #'
 #' @examples
+#' zoomOut = processZoomOutput(fileRoot=file.path(
+#' system.file('extdata', package = 'zoomGroupStats'),"meeting001"
+#' ), rosetta=TRUE)
 #' \dontrun{
 #' zoomOut = processZoomOutput(fileRoot="~/zoomMeetings/myMeeting", rosetta=TRUE)
 #' }

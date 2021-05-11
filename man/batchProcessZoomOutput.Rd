@@ -42,6 +42,7 @@ function will process a set of meetings at once.
 }
 \examples{
 batchOut = batchProcessZoomOutput(batchInput=system.file('extdata', 
-'myMeetingsBatch.xlsx', package = 'zoomGroupStats'))
+'myMeetingsBatch.xlsx', package = 'zoomGroupStats'), 
+exportZoomRosetta=file.path(tempdir(),"_rosetta.xlsx"))
 
 }

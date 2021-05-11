@@ -30,8 +30,6 @@ and meeting levels
 agg.out = aggSentiment(inputData=sample_transcript_sentiment_aws, 
 meetingId="batchMeetingId", speakerId = "userId", sentMethod="aws")
 
-\dontrun{
-agg.out = aggSentiment(inputData=sample_transcript_sentiment_syu, 
-meetingId="batchMeetingId", speakerId = "userId", sentMethod="syuzhet")
-}
+agg.out = aggSentiment(inputData=sample_chat_sentiment_syu, 
+meetingId="batchMeetingId", speakerId = "userName", sentMethod="syuzhet")
 }

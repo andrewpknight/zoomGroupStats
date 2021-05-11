@@ -16,6 +16,8 @@
 #' @export
 #'
 #' @examples
+#' rosetta.out = createZoomRosetta(processZoomOutput(fileRoot=
+#' file.path(system.file('extdata', package = 'zoomGroupStats'),"meeting001")))
 #' \dontrun{
 #' rosetta.out = createZoomRosetta(processZoomOutput(fileRoot="~/zoomMeetings/meeting001"))
 #' }

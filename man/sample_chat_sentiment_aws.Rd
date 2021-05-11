@@ -3,13 +3,13 @@
 \docType{data}
 \name{sample_chat_sentiment_aws}
 \alias{sample_chat_sentiment_aws}
-\title{Parsed chat file in a Zoom meeting with sentiment analysis using AWS}
+\title{Parsed chat file in a 'Zoom' meeting with sentiment analysis using AWS}
 \format{
 A data frame with 10 rows of 14 variables:
 \describe{
 \item{batchMeetingId}{a character meeting identification variable}
 \item{messageId}{an incremented numeric identifier for a marked chat message}
-\item{userName}{Zoom display name attached to the messager}
+\item{userName}{'Zoom' display name attached to the messager}
 \item{messageSeconds}{when the message was posted as the number of seconds from the start of the recording}
 \item{messageTime}{timestamp for message}
 \item{message}{text of the message}
@@ -24,12 +24,12 @@ A data frame with 10 rows of 14 variables:
 }
 }
 \source{
-\url{http://apknight.org/}
+\url{http://zoomgroupstats.org/}
 }
 \usage{
 sample_chat_sentiment_aws
 }
 \description{
-Parsed chat file in a Zoom meeting with sentiment analysis using AWS
+Parsed chat file in a 'Zoom' meeting with sentiment analysis using AWS
 }
 \keyword{datasets}

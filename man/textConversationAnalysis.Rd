@@ -2,9 +2,7 @@
 % Please edit documentation in R/textConversationAnalysis.R
 \name{textConversationAnalysis}
 \alias{textConversationAnalysis}
-\title{Analyze conversation attributes
-This function takes in the output of one of the other functions (either processZoomChat or processZoomTranscript)
-and produces a set of conversation measures.}
+\title{Analyze conversation attributes}
 \usage{
 textConversationAnalysis(
   inputData,
@@ -32,28 +30,41 @@ statistics at the corpus level. The second list item contains statistics
 at the speaker/messager level of analysis.
 }
 \description{
-Analyze conversation attributes
 This function takes in the output of one of the other functions (either processZoomChat or processZoomTranscript)
 and produces a set of conversation measures.
 }
 \examples{
 convo.out = textConversationAnalysis(inputData=sample_transcript_processed, 
-inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="none")
+inputType='transcript', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="none")
+
+convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_syu, 
+inputType='transcript', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="syuzhet")
+
+convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_aws, 
+inputType='chat', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="aws")
 
 \dontrun{
 convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_aws, 
-inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="aws")
+inputType='transcript', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="aws")
 
 convo.out = textConversationAnalysis(inputData=sample_transcript_sentiment_syu, 
-inputType='transcript', meetingId='batchMeetingId', speakerId='userName', sentMethod="syuzhet")
+inputType='transcript', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="syuzhet")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_processed, 
-inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="none")
+inputType='chat', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="none")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_aws, 
-inputType='chat', meetingId='batchMeetingId', speakerId='userName', sentMethod="aws")
+inputType='chat', meetingId='batchMeetingId', 
+speakerId='userName', sentMethod="aws")
 
 convo.out = textConversationAnalysis(inputData=sample_chat_sentiment_syu, 
-inputType='chat',meetingId='batchMeetingId',  speakerId='userName', sentMethod="syuzhet")
+inputType='chat',meetingId='batchMeetingId',  
+speakerId='userName', sentMethod="syuzhet")
 }
 }

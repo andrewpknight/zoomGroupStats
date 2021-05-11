@@ -4,10 +4,19 @@
 \alias{batchGrabVideoStills}
 \title{Batch process video files, breaking them into stills}
 \usage{
-batchGrabVideoStills(batchInfo, sampleWindow)
+batchGrabVideoStills(
+  batchInfo,
+  imageDir = NULL,
+  overWriteDir = FALSE,
+  sampleWindow
+)
 }
 \arguments{
 \item{batchInfo}{the batchInfo data.frame that is output from batchProcessZoomOutput}
+
+\item{imageDir}{the directory where you want the function to write the extracted image files}
+
+\item{overWriteDir}{logical indicating whether you want to overwrite imageDir if it exists}
 
 \item{sampleWindow}{an integer indicating how frequently you want to sample
 images in number of seconds.}
@@ -18,19 +27,21 @@ corresponds to one video, with:
 \itemize{
 \item batchMeetingId - the meeting identifier
 \item videoExists - boolean indicating whether the video file was there
+\item imageDir - path to the directory where video images are saved
 \item sampleWindow - integer with the sampleWindow requested
 \item numFramesExtracted - the number of image files that were saved
 }
 }
 \description{
 #' This helper calls grabVideoStills, which function currently
-relies on either magick or ffmpeg to split a video file into images.
-This function will save the images locally in the same
-directory where the video is located.
+relies on the av package and ffmpeg to split a video file into images.
+This function will save the images to the director specified by the user.
 }
 \examples{
+vidBatchInfo = batchGrabVideoStills(batchInfo=sample_batch_info,
+imageDir=tempdir(), overWriteDir=TRUE, sampleWindow=2)
 \dontrun{
-vidBatchInfo = batchGrabVideoStills(batchInfo=zoomOut$batchInfo, 
-sampleWindow=600)
+vidBatchInfo = batchGrabVideoStills(batchInfo=zoomOut$batchInfo,
+imageDir="~/Documents/myMeetings/videoImages", overWriteDir=TRUE,  sampleWindow=600)
 }
 }

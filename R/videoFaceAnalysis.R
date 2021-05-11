@@ -10,32 +10,36 @@
 #' @param inputVideo string path to the video file (ideal is gallery)
 #' @param recordingStartDateTime YYYY-MM-DD HH:MM:SS of the start of the recording
 #' @param sampleWindow Frame rate for the analysis
-#' @param facesCollectionID name of an AWS collection with identified faces
-#' @param videoImageDirectory path to a directory containing pre-split images. This will skip the splitting of an image file, but it presumes that images were pre-split using grabVideoStills
+#' @param facesCollectionID name of an 'AWS' collection with identified faces
+#' @param videoImageDirectory path to a directory that either contains image files or where you want to save image files
+#' @param grabVideoStills logical indicating whether you want the function to split the video file or not
+#' @param overWriteDir logical indicating whether to overwrite videoImageDirectory if it exists
 #'
-#' @return data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from AWS rekognition. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment. 
+#' @return data.frame with one record for every face detected in each frame. For each face, there is an abundance of information from 'AWS Rekognition'. This output is quite detailed. Note that there will be a varying number of faces per sampled frame in the video. Imagine that you have sampled the meeting and had someone rate each person's face within that sampled moment. 
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' vid.out = videoFaceAnalysis(inputVideo="sample_gallery_video.mp4", 
+#' vid.out = videoFaceAnalysis(inputVideo="meeting001_video.mp4", 
 #' recordingStartDateTime="2020-04-20 13:30:00", 
-#' sampleWindow=30, facesCollectionID="group-r")
+#' sampleWindow=1, facesCollectionID="group-r",
+#' videoImageDirectory="~/Documents/meetingImages", 
+#' grabVideoStills=FALSE, overWriteDir=FALSE)
 #' }
-videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA, videoImageDirectory=NULL) {
-
+videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, facesCollectionID=NA, videoImageDirectory=NULL, grabVideoStills=FALSE, overWriteDir=FALSE) {
+  
   svc = paws::rekognition()
   
   recordingStartDateTime = as.POSIXct(recordingStartDateTime)
-
-  if(is.null(videoImageDirectory)) {
-    grabVidOut = grabVideoStills(inputVideo=inputVideo, sampleWindow=sampleWindow, tryffmpeg=TRUE)
-    videoImageDirectory = tools::file_path_sans_ext(inputVideo)
+  
+  if(grabVideoStills) {
+    grabVidOut = grabVideoStills(inputVideo=inputVideo, imageDir=videoImageDirectory,overWriteDir=overWriteDir, sampleWindow=sampleWindow)
   } 
-
+  videoImageDirectory = file.path(videoImageDirectory, basename(tools::file_path_sans_ext(inputVideo)))
+  
   # Get any images associated with this video
   imgFiles = list.files(path=videoImageDirectory, full.names=T)
-  
+
   # These are empty lists to use to safe the information
   df.o = list()
   inf = list()
@@ -54,7 +58,7 @@ videoFaceAnalysis = function(inputVideo, recordingStartDateTime, sampleWindow, f
       imgTimestamp = sampleWindow/2
     } else {
       imgTimestamp = sampleWindow/2 + (i-1)*sampleWindow
-
+      
     }
     
     # Detect faces in this frame
