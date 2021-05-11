@@ -1,7 +1,7 @@
 #' Batch process video files, breaking them into stills 
 #' 
 #' #' This helper calls grabVideoStills, which function currently 
-#' relies on the av package and ffmpeg to split a video file into images. 
+#' relies on the av package and 'ffmpeg' to split a video file into images. 
 #' This function will save the images to the director specified by the user. 
 #'
 #' @param batchInfo the batchInfo data.frame that is output from batchProcessZoomOutput
@@ -34,8 +34,12 @@ batchGrabVideoStills = function(batchInfo,imageDir=NULL, overWriteDir=FALSE, sam
     stop("You must provide a value for imageDir so that the function knows where to write the images extracted from the video.")
   }
   
-  
+
   vidBatch = data.frame(batchMeetingId=integer(), videoExists=logical(), sampleWindow=integer(), imageDir=character(), numFramesExtracted=integer())
+  
+  haveffmpeg = tryCatch(system("ffmpeg -hide_banner -loglevel quiet -version", intern=T), error=function(err) NA)
+  
+  if(!is.na(haveffmpeg[1])) {  
   
   if(nrow(batchInfo) == 1) pbMin=0 else pbMin=1
   
@@ -60,6 +64,8 @@ batchGrabVideoStills = function(batchInfo,imageDir=NULL, overWriteDir=FALSE, sam
     }
   }
   close(pb)
-  
+  } else {
+    message("Error: No videos can be processed because you do not have a working version of ffmpeg. Please check your installation of ffmpeg.")       
+  }
   return(vidBatch)
 }

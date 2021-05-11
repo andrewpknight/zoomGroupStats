@@ -34,7 +34,7 @@ corresponds to one video, with:
 }
 \description{
 #' This helper calls grabVideoStills, which function currently
-relies on the av package and ffmpeg to split a video file into images.
+relies on the av package and 'ffmpeg' to split a video file into images.
 This function will save the images to the director specified by the user.
 }
 \examples{

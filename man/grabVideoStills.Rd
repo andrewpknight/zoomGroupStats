@@ -31,7 +31,7 @@ a stillframe, with the following info:
 }
 \description{
 This function currently relies on the av package and
-ffmpeg to split a video file into images. This function will save
+'ffmpeg' to split a video file into images. This function will save
 the images to the directory specified by the user.
 }
 \examples{

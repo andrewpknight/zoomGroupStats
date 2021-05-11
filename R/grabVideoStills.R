@@ -1,7 +1,7 @@
 #' Helper function to split a video into still frames
 #' 
 #' This function currently relies on the av package and 
-#' ffmpeg to split a video file into images. This function will save 
+#' 'ffmpeg' to split a video file into images. This function will save 
 #' the images to the directory specified by the user.
 #' 
 #' @param inputVideo full filepath to a video file
@@ -47,19 +47,26 @@ grabVideoStills = function(inputVideo, imageDir=NULL, overWriteDir=FALSE, sample
   haveffmpeg = tryCatch(system("ffmpeg -hide_banner -loglevel quiet -version", intern=T), error=function(err) NA)
   
   if(!is.na(haveffmpeg[1])) {
-    avOut = av::av_video_images(inputVideo, destdir=outDir, fps=1.0/sampleWindow, format="png")
-    message("Processing ", basename(inputVideo), " using the av package. Note that processing videos can be time intensive for long duration videos.")
+    dir.create(outDir)    
+    ffCmd = paste("ffmpeg -i ", inputVideo, " -vf fps=1.0/",sampleWindow, " ", outpath, " -hide_banner -nostdin -loglevel error", sep="")    
+    message("Processing ", basename(inputVideo), " using ffmpeg. Note that processing videos can be time intensive for long duration videos.")
+    o = system(ffCmd, intern=T)    
+    
+    # How many images are in the directory:
+    avOut = list.files(path=outDir, pattern="*.png", full.names=T)    
+  
+    if(length(avOut) > 1) {
+      imageSeconds = c(sampleWindow/2, sampleWindow/2+(1:(length(avOut)-1))*sampleWindow)  	
+    } else {
+      imageSeconds = sampleWindow/2
+    }
+    
+    imageInfo = data.frame(imageSeconds=imageSeconds, imageName=avOut)
+    
   } else {
-    stop("No videos can be processed because you do not have a working version of ffmpeg. Please check your installation of ffmpeg.")   
+    message("Error: No videos can be processed because you do not have a working version of ffmpeg. Please check your installation of ffmpeg.")   
+    imageInfo = data.frame(imageSeconds=NA, imageName=NA)
   } 
   
-  # How many images were actually created?
-  if(length(avOut) > 1) {
-    imageSeconds = c(sampleWindow/2, sampleWindow/2+(1:(length(avOut)-1))*sampleWindow)  	
-  } else {
-    imageSeconds = sampleWindow/2
-  }
-  
-  imageInfo = data.frame(imageSeconds=imageSeconds, imageName=avOut)
   return(imageInfo)
 }
