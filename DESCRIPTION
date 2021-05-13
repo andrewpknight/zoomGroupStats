@@ -16,6 +16,7 @@ RoxygenNote: 7.1.1
 Imports: 
     data.table,
     dplyr,
+    jsonlite,
     lubridate,
     magick,
     openxlsx,
