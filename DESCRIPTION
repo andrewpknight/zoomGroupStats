@@ -1,6 +1,6 @@
 Package: zoomGroupStats
 Title: Analyze Text, Audio, and Video from 'Zoom' Meetings
-Version: 0.1.0
+Version: 0.1.9000
 Authors@R: 
     person(given = "Andrew",
            family = "Knight",
