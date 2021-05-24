@@ -19,9 +19,11 @@ Imports:
     jsonlite,
     lubridate,
     magick,
+    magrittr,
     openxlsx,
     paws,
     pbapply,
+    rlang,
     stringr,
     syuzhet,
     utils
