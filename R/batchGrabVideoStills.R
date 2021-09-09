@@ -4,13 +4,14 @@
 #' relies on the av package and 'ffmpeg' to split a video file into images. 
 #' This function will save the images to the director specified by the user. 
 #'
-#' @param batchInfo the batchInfo data.frame that is output from batchProcessZoomOutput
+#' @param batchOut the full object that is output from batchProcessZoomOutput
 #' @param imageDir the directory where you want the function to write the extracted image files
 #' @param overWriteDir logical indicating whether you want to overwrite imageDir if it exists
 #' @param sampleWindow an integer indicating how frequently you want to sample
 #' images in number of seconds. 
 #' 
-#' @return a data.frame that gives information about the batch. Each record 
+#' @return the batchOut input object, but with a new item--videoInfo--that is a a data.frame 
+#' that gives information about the batch. Each record 
 #' corresponds to one video, with: 
 #' \itemize{
 #'     \item batchMeetingId - the meeting identifier
@@ -22,18 +23,21 @@
 #' @export
 #'
 #' @examples
-#' vidBatchInfo = batchGrabVideoStills(batchInfo=sample_batch_info,
+#' vidBatchInfo = batchGrabVideoStills(batchOut=batchProcessZoomOutput(
+#' batchInput=system.file('extdata','myMeetingsBatch.xlsx', 
+#' package = 'zoomGroupStats')),
 #' imageDir=tempdir(), overWriteDir=TRUE, sampleWindow=2)
 #' \dontrun{
-#' vidBatchInfo = batchGrabVideoStills(batchInfo=zoomOut$batchInfo,
+#' vidBatchInfo = batchGrabVideoStills(batchOut=zoomOut,
 #' imageDir="~/Documents/myMeetings/videoImages", overWriteDir=TRUE,  sampleWindow=600)
 #' }
-batchGrabVideoStills = function(batchInfo,imageDir=NULL, overWriteDir=FALSE, sampleWindow){
+batchGrabVideoStills = function(batchOut,imageDir=NULL, overWriteDir=FALSE, sampleWindow){
   
   if(is.null(imageDir)) {
     stop("You must provide a value for imageDir so that the function knows where to write the images extracted from the video.")
   }
   
+  batchInfo = batchOut$batchInfo
 
   vidBatch = data.frame(batchMeetingId=integer(), videoExists=logical(), sampleWindow=integer(), imageDir=character(), numFramesExtracted=integer())
   
@@ -64,8 +68,9 @@ batchGrabVideoStills = function(batchInfo,imageDir=NULL, overWriteDir=FALSE, sam
     }
   }
   close(pb)
+  batchOut$videoInfo = vidBatch
   } else {
     message("Error: No videos can be processed because you do not have a working version of ffmpeg. Please check your installation of ffmpeg.")       
   }
-  return(vidBatch)
+  return(batchOut)
 }

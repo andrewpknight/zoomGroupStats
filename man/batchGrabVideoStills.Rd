@@ -5,14 +5,14 @@
 \title{Batch process video files, breaking them into stills}
 \usage{
 batchGrabVideoStills(
-  batchInfo,
+  batchOut,
   imageDir = NULL,
   overWriteDir = FALSE,
   sampleWindow
 )
 }
 \arguments{
-\item{batchInfo}{the batchInfo data.frame that is output from batchProcessZoomOutput}
+\item{batchOut}{the full object that is output from batchProcessZoomOutput}
 
 \item{imageDir}{the directory where you want the function to write the extracted image files}
 
@@ -22,7 +22,8 @@ batchGrabVideoStills(
 images in number of seconds.}
 }
 \value{
-a data.frame that gives information about the batch. Each record
+the batchOut input object, but with a new item--videoInfo--that is a a data.frame
+that gives information about the batch. Each record
 corresponds to one video, with:
 \itemize{
 \item batchMeetingId - the meeting identifier
@@ -38,10 +39,12 @@ relies on the av package and 'ffmpeg' to split a video file into images.
 This function will save the images to the director specified by the user.
 }
 \examples{
-vidBatchInfo = batchGrabVideoStills(batchInfo=sample_batch_info,
+vidBatchInfo = batchGrabVideoStills(batchOut=batchProcessZoomOutput(
+batchInput=system.file('extdata','myMeetingsBatch.xlsx', 
+package = 'zoomGroupStats')),
 imageDir=tempdir(), overWriteDir=TRUE, sampleWindow=2)
 \dontrun{
-vidBatchInfo = batchGrabVideoStills(batchInfo=zoomOut$batchInfo,
+vidBatchInfo = batchGrabVideoStills(batchOut=zoomOut,
 imageDir="~/Documents/myMeetings/videoImages", overWriteDir=TRUE,  sampleWindow=600)
 }
 }
