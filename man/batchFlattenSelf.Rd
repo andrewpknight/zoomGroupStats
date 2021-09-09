@@ -24,11 +24,11 @@ a data.frame that is the same format as inputData, but where the observations ar
 Wrapper to run the flattenSelf function on a batch of meetings
 }
 \examples{
-newChat = flattenSelf(inputData = sample_chat_processed, 
+newChat = batchFlattenSelf(inputData = sample_chat_processed, 
 inputType="chat", meetingId = "batchMeetingId", 
 speakerId="userName", gapLength=120)
 
-newTranscript = flattenSelf(inputData = sample_transcript_processed, 
+newTranscript = batchFlattenSelf(inputData = sample_transcript_processed, 
 inputType="transcript", meetingId = "batchMeetingId", 
 speakerId="userName", gapLength=120)
 }
