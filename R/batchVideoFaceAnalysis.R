@@ -29,7 +29,7 @@ batchVideoFaceAnalysis = function(batchInfo, imageDir, sampleWindow, facesCollec
       vidOut = videoFaceAnalysis(inputVideo=file.path(mInfo$dirRoot, paste0(mInfo$fileRoot,"_video.mp4")), recordingStartDateTime=mInfo$recordingStartDateTime, sampleWindow=sampleWindow, facesCollectionID=facesCollectionID, videoImageDirectory=imageDir)
       vidOut$batchMeetingId = mInfo$batchMeetingId
       
-      if(!exists('resOut')) {
+      if(!exists(resOut)) {
         resOut = vidOut
       } else {
         resOut = rbind(resOut, vidOut)
